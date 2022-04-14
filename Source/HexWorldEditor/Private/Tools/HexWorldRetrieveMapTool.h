@@ -28,7 +28,7 @@ public:
 	FIntVector CenterLocation = FIntVector{0,0,0};
 
 	UPROPERTY(EditAnywhere, Category = Options, meta = (DisplayName = "Diameter of retrieved area"))
-	int Diameter;
+	int Diameter = 1;
 
 	UPROPERTY(EditAnywhere, Category = Options, meta = (DisplayName = "Clear existing map before retrieving"))
 	bool bClearMap;

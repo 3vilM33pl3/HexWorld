@@ -1,5 +1,6 @@
 #include "HexWorldRetrieveMapTool.h"
 #include "InteractiveToolManager.h"
+#include "Actors/Hexagon.h"
 #include "Comms/HexWorldRunnable.h"
 #include "Engine/World.h"
 #include "hexworld/hex_client.h"
@@ -66,8 +67,10 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 		if(Properties->HexCoordData->Dequeue(*Hex))
 		{
 			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ]"), Hex->X, Hex->Y, Hex->Z);
-
+			const FVector Location = HexToLocation(Hex, 1500);
+			const FRotator Rotation(0.0f, 0.0f, 0.0f);
 			
+			GetWorld()->SpawnActor<AHexagon>(Location, Rotation);
 			
 		}
 	}	
@@ -75,8 +78,8 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 
 FVector UHexWorldRetrieveMapTool::HexToLocation(const Hexagon* Hex, const int Size) const
 {
-	double x = Size * (3.0 / 2.0 * Hex->X);
-	double y = Size * (sqrt(3.0)/2.0 * Hex->X + sqrt(3.0) * Hex->Y);
+	double x = Size * (sqrt(3.0) * Hex->X + sqrt(3.0)/2.0 * Hex->Y);
+	double y = Size * (3.0/2.0 * Hex->Y);
 	return FVector(x, y, 0);	
 }
 
