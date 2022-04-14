@@ -42,6 +42,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Hexagon Direction"))
 	EHexagonDirection Direction;
 
+	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Hexagon Type"))
+	FString Type = TEXT("0000-0000-0000-0000");
+	
 protected:
 	virtual void BeginPlay() override;
 

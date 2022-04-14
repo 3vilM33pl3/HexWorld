@@ -69,8 +69,16 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ]"), Hex->X, Hex->Y, Hex->Z);
 			const FVector Location = HexToLocation(Hex, 1500);
 			const FRotator Rotation(0.0f, 0.0f, 0.0f);
+
 			
-			GetWorld()->SpawnActor<AHexagon>(Location, Rotation);
+			AHexagon* HexTemplate = NewObject<AHexagon>(this);
+			HexTemplate->Coordinates = Location;
+			HexTemplate->Location = FIntVector(Hex->X, Hex->Y, Hex->Z);
+			HexTemplate->Type = UTF8_TO_TCHAR(Hex->Type.c_str());
+
+			FActorSpawnParameters Parameters;
+			Parameters.Template = HexTemplate;
+			GetWorld()->SpawnActor<AHexagon>(Location, Rotation, Parameters);
 			
 		}
 	}	
