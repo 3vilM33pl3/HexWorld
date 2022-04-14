@@ -66,7 +66,7 @@ protected:
 
 private:
 	virtual void OnTick(float DeltaTime) override;
-
-
+	FVector HexToLocation(const Hexagon* Hex, const int Size) const;
+	
 };
 
