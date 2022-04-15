@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "InteractiveToolBuilder.h"
+#include "Actors/Hexagon.h"
 #include "BaseTools/SingleClickTool.h"
 #include "Containers/CircularQueue.h"
 #include "hexworld/hex_lib.h"

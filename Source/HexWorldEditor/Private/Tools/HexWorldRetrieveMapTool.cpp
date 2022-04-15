@@ -4,6 +4,7 @@
 #include "Comms/HexWorldRunnable.h"
 #include "Engine/World.h"
 #include "hexworld/hex_client.h"
+#include "Kismet/GameplayStatics.h"
 
 #define LOCTEXT_NAMESPACE "HexWorldRetrieveMapTool"
 
@@ -18,8 +19,19 @@ UInteractiveTool* UHexWorldRetrieveMapToolBuilder::BuildTool(const FToolBuilderS
 void UHexWorldRetrieveMapProperties::RetrieveMap()
 {
 	UE_LOG(LogTemp, Log, TEXT("Retrieve map called"));
-	
 
+	if(bClearMap)
+	{
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHexagon::StaticClass(), FoundActors);
+
+		for(auto& Hex: FoundActors)
+		{
+			Hex->Destroy();
+		}
+		
+	}
+	
 	FHexWorldRunnable::RunLambdaOnBackgroundThread(HexCoordData, [&]
 	{
 		HexagonClient* HexagonClient = new ::HexagonClient(std::string(TCHAR_TO_UTF8(*Address)), bSecure);
@@ -79,7 +91,7 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			FActorSpawnParameters Parameters;
 			Parameters.Template = HexTemplate;
 			GetWorld()->SpawnActor<AHexagon>(Location, Rotation, Parameters);
-			
+
 		}
 	}	
 }
