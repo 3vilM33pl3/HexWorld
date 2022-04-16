@@ -78,15 +78,16 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 		Hexagon* Hex = new Hexagon(0,0,0,"", Direction::N);
 		if(Properties->HexCoordData->Dequeue(*Hex))
 		{
-			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ]"), Hex->X, Hex->Y, Hex->Z);
+			const FString Type(Hex->Type.c_str());
+			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), Hex->X, Hex->Y, Hex->Z, *Type);
 			const FVector Location = HexToLocation(Hex, 1500);
 			const FRotator Rotation(0.0f, 0.0f, 0.0f);
-
+			
 			
 			AHexagon* HexTemplate = NewObject<AHexagon>(this);
 			HexTemplate->Coordinates = Location;
 			HexTemplate->Location = FIntVector(Hex->X, Hex->Y, Hex->Z);
-			HexTemplate->Type = UTF8_TO_TCHAR(Hex->Type.c_str());
+			HexTemplate->SetTypeAndDirection(UTF8_TO_TCHAR(Hex->Type.c_str()), AHexagon::ConvertDirection(Hex->Direction));
 
 			FActorSpawnParameters Parameters;
 			Parameters.Template = HexTemplate;
@@ -100,7 +101,7 @@ FVector UHexWorldRetrieveMapTool::HexToLocation(const Hexagon* Hex, const int Si
 {
 	double x = Size * (sqrt(3.0) * Hex->X + sqrt(3.0)/2.0 * Hex->Y);
 	double y = Size * (3.0/2.0 * Hex->Y);
-	return FVector(x, y, 0);	
+	return FVector(x, y, -500);	
 }
 
 #undef LOCTEXT_NAMESPACE

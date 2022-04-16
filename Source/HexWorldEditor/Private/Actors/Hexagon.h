@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "hexworld/hex_lib.h"
 #include "Hexagon.generated.h"
 
 UENUM()
@@ -28,7 +29,7 @@ public:
 	AHexagon();
 
 	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Static mesh component"))
-	UStaticMeshComponent* HexagonPlain;
+	UStaticMeshComponent* HexagonMeshComponent;
 
 	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Static mesh"))
 	UStaticMesh* HexMesh;
@@ -44,6 +45,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Hexagon Type"))
 	FString Type = TEXT("0000-0000-0000-0000");
+
+	void SetTypeAndDirection(FString Type, EHexagonDirection NewDirection);
+
+	static EHexagonDirection ConvertDirection(::Direction Direction);
 	
 protected:
 	virtual void BeginPlay() override;
