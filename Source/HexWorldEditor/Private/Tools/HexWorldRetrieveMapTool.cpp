@@ -75,23 +75,38 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 {
 	if(!Properties->HexCoordData->IsEmpty())
 	{
-		Hexagon* Hex = new Hexagon(0,0,0,"", Direction::N);
-		if(Properties->HexCoordData->Dequeue(*Hex))
+		if(Hexagon* Hex = new Hexagon(0,0,0,"", Direction::N); Properties->HexCoordData->Dequeue(*Hex))
 		{
 			const FString Type(Hex->Type.c_str());
-			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), Hex->X, Hex->Y, Hex->Z, *Type);
+			const EHexagonDirection Direction = AHexagon::ConvertDirection(Hex->Direction);
 			const FVector Location = HexToLocation(Hex, 1500);
-			const FRotator Rotation(0.0f, 0.0f, 0.0f);
-			
-			
-			AHexagon* HexTemplate = NewObject<AHexagon>(this);
-			HexTemplate->Coordinates = Location;
-			HexTemplate->Location = FIntVector(Hex->X, Hex->Y, Hex->Z);
-			HexTemplate->SetTypeAndDirection(UTF8_TO_TCHAR(Hex->Type.c_str()), AHexagon::ConvertDirection(Hex->Direction));
+			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<::Direction>>(Direction) - 1), 0.0f);
 
-			FActorSpawnParameters Parameters;
-			Parameters.Template = HexTemplate;
-			GetWorld()->SpawnActor<AHexagon>(Location, Rotation, Parameters);
+			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), Hex->X, Hex->Y, Hex->Z, *Type);
+
+			FString BluePrintName("/HexWorld/");
+			
+			BluePrintName = BluePrintName.Append(Type).Append("/BP_").Append(Type).Append(".BP_").Append(Type);
+			
+			UObject* SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(),NULL, *BluePrintName));
+
+			UBlueprint* GeneratedBP = Cast<UBlueprint>(SpawnActor);
+			if (!SpawnActor)
+			{
+				UE_LOG(LogTemp, Display, TEXT("Blueprint %s not found"), *BluePrintName);
+				return;
+			}
+
+			UClass* SpawnClass = SpawnActor->StaticClass();
+			if (SpawnClass == NULL)
+			{
+				UE_LOG(LogTemp, Display, TEXT("Blueprint %s StaticClass == NULL"), *BluePrintName);
+				return;
+			}
+
+			FActorSpawnParameters SpawnParameters;
+			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
 
 		}
 	}	
@@ -101,7 +116,7 @@ FVector UHexWorldRetrieveMapTool::HexToLocation(const Hexagon* Hex, const int Si
 {
 	double x = Size * (sqrt(3.0) * Hex->X + sqrt(3.0)/2.0 * Hex->Y);
 	double y = Size * (3.0/2.0 * Hex->Y);
-	return FVector(x, y, -500);	
+	return FVector(x, y, 0);	
 }
 
 #undef LOCTEXT_NAMESPACE
