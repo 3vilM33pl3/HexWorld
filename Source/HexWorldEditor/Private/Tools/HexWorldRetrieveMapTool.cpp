@@ -23,7 +23,7 @@ void UHexWorldRetrieveMapProperties::RetrieveMap()
 	if(bClearMap)
 	{
 		TArray<AActor*> FoundActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHexagon::StaticClass(), FoundActors);
+		UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Hexagon"), FoundActors);
 
 		for(auto& Hex: FoundActors)
 		{
@@ -48,6 +48,7 @@ void UHexWorldRetrieveMapProperties::RetrieveMap()
 		const std::vector<Hexagon> HexCV = HexagonClient->GetHexagonRing(Center, Diameter, true);
 		for(int i=0; i< HexCV.size(); i++)
 		{
+			UE_LOG(LogTemp, Display, TEXT("Enqueue %d [%d, %d, %d ] %s"), i, HexCV[i].X, HexCV[i].Y, HexCV[i].Z, *FString(HexCV[i].Type.c_str()));
 			HexCoordData->Enqueue(HexCV[i]);
 		}
 		
@@ -106,8 +107,14 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 
 			FActorSpawnParameters SpawnParameters;
 			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
+			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
+			HexActor->Tags.Add(FName("Hexagon"));
 
+			const FString StringPrintf = FString(TEXT("{0},{1},{2}"));
+			const FString StringFormatted = FString::Format(*StringPrintf, {Hex->X, Hex->Y, Hex->Z});
+			HexActor->Tags.Add(FName(StringFormatted));
+			HexActor->Tags.Add(FName(Type));
+			
 		}
 	}	
 }
