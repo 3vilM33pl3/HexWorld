@@ -21,7 +21,7 @@ enum class EHexagonDirection : uint8
 };
 
 UCLASS(BlueprintType)
-class HEXWORLDEDITOR_API AHexagon : public AActor
+class HEXWORLDRUNTIME_API AHexagon : public AActor
 {
 	GENERATED_BODY()
 

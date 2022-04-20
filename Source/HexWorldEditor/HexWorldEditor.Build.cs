@@ -40,7 +40,8 @@ public class HexWorldEditor : ModuleRules
 				"LevelEditor",
 				"InteractiveToolsFramework",
 				"EditorInteractiveToolsFramework", 
-				"HexWorldLibrary"
+				"HexWorldLibrary",
+				"HexWorldRuntime"
 			}
 		);
 		

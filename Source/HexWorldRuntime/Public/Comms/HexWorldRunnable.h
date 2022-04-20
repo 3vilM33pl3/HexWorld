@@ -27,7 +27,7 @@ struct FHexagonMetaData {
 	FHexagonMetaData(): X(0), Y(0), Z(0) {} ;
 };
 
-class HEXWORLDEDITOR_API FHexWorldRunnable : FRunnable
+class HEXWORLDRUNTIME_API FHexWorldRunnable : FRunnable
 {
 private:
 	FRunnableThread* Thread;
