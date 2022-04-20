@@ -1,4 +1,6 @@
 #include "HexWorldRetrieveMapTool.h"
+
+#include "FileHelpers.h"
 #include "InteractiveToolManager.h"
 #include "Actors/Hexagon.h"
 #include "Comms/HexWorldRunnable.h"
@@ -109,11 +111,14 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
 			HexActor->Tags.Add(FName("Hexagon"));
+			HexActor->Modify(true);
 
 			const FString StringPrintf = FString(TEXT("{0},{1},{2}"));
 			const FString StringFormatted = FString::Format(*StringPrintf, {Hex->X, Hex->Y, Hex->Z});
 			HexActor->Tags.Add(FName(StringFormatted));
 			HexActor->Tags.Add(FName(Type));
+
+			//bool bSaved = FEditorFileUtils::SaveLevel(GetWorld()->GetLevel(0));
 			
 		}
 	}	

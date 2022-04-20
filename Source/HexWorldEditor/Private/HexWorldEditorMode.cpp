@@ -1,6 +1,7 @@
 ﻿#include "HexWorldEditorMode.h"
 #include "HexWorldCommands.h"
 #include "HexWorldEditorToolkit.h"
+#include "InteractiveToolManager.h"
 
 #include "Tools/HexWorldEditHexTool.h"
 #include "Tools/HexWorldRetrieveMapTool.h"
@@ -31,6 +32,10 @@ void UHexWorldEditorMode::Enter()
 
 	RegisterTool(ToolCommands.HexWorldRetrieveMap, RetrieveMapToolName, NewObject<UHexWorldRetrieveMapToolBuilder>(this));
 	RegisterTool(ToolCommands.HexWorldEditHex, EditHexToolName, NewObject<UHexWorldEditHexToolBuilder>(this));
+
+	GetToolManager()->SelectActiveToolType(EToolSide::Left, TEXT("HexWorldt_RetrieveMapTool"));
+	GetToolManager()->ActivateTool(EToolSide::Left);
+	
 }
 
 void UHexWorldEditorMode::Exit()
