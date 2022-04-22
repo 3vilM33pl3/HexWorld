@@ -48,7 +48,7 @@ public:
 };
 
 UCLASS()
-class HEXWORLDEDITOR_API UHexWorldRetrieveMapTool : public USingleClickTool
+class HEXWORLDEDITOR_API UHexWorldRetrieveMapTool : public UInteractiveTool
 {
 	GENERATED_BODY()
 
