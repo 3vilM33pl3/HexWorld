@@ -54,6 +54,3 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
-
-__ExternalActors__/
-__ExternalObjects__/
