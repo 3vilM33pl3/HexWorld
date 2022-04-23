@@ -34,6 +34,8 @@ public class HexWorldRuntime : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"UnrealEd",
+				"EditorFramework",
 				"HexWorldLibrary"
 			}
 		);
