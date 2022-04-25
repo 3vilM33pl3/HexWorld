@@ -23,6 +23,13 @@ public class HexWorldLibrary : ModuleRules
 			PublicAdditionalLibraries.AddRange(libraries);	
 		}
 		
+		if (Target.Platform == UnrealTargetPlatform.Mac)
+		{
+			var libraries = FindFiles(Path.GetFullPath(Path.Combine(ModuleDirectory, "Mac")), "a");
+			Console.WriteLine(string.Join("Adding library: ", libraries));
+			PublicAdditionalLibraries.AddRange(libraries);	
+		}
+		
 		AddEngineThirdPartyPrivateStaticDependencies(Target, "OpenSSL");
 		AddEngineThirdPartyPrivateStaticDependencies(Target, "zlib");
 		
