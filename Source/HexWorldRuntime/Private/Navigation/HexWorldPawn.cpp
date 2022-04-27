@@ -21,12 +21,15 @@ AHexWorldPawn::AHexWorldPawn()
 
 		Carrier = CarrierVisualAsset.Object;
 		CarrierVisual->SetStaticMesh(Carrier);
-		CarrierVisual->SetCollisionProfileName(TEXT("NoCollision"));
+		CarrierVisual->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to load boat static mesh"));
 	}
+
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	
 }
 
 void AHexWorldPawn::BeginPlay()
