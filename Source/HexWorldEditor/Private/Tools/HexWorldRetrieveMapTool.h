@@ -43,7 +43,7 @@ public:
 	UFUNCTION(CallInEditor, Category = Options)
 	void RetrieveMap();
 	
-	TCircularQueue<Hexagon>* HexCoordData = new TCircularQueue<Hexagon>(120);
+	TCircularQueue<Hexagon>* HexCoordData = new TCircularQueue<Hexagon>(24);
 
 };
 

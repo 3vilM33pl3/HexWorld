@@ -48,7 +48,7 @@ public:
 
 	void SetTypeAndDirection(FString Type, EHexagonDirection NewDirection);
 
-	static EHexagonDirection ConvertDirection(::Direction Direction);
+	static EHexagonDirection ConvertDirection(std::string Direction);
 	
 protected:
 	virtual void BeginPlay() override;

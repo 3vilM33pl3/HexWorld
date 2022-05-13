@@ -26,12 +26,12 @@ void AHexagonMap::Tick(float DeltaTime)
 
 	if(!HexCoordData->IsEmpty())
 	{
-		if(Hexagon* Hex = new Hexagon(0,0,0,"", Direction::N); HexCoordData->Dequeue(*Hex))
+		if(Hexagon* Hex = new Hexagon(0,0,0,"", std::map<std::string, std::string>{{"direction", "N"}}); HexCoordData->Dequeue(*Hex))
 		{
 			const FString Type(Hex->Type.c_str());
-			const EHexagonDirection Direction = AHexagon::ConvertDirection(Hex->Direction);
+			const EHexagonDirection Direction = AHexagon::ConvertDirection(Hex->Data["direction"]);
 			const FVector Location = HexToLocation(Hex, 1500);
-			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<::Direction>>(Direction) - 1), 0.0f);
+			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
 
 			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), Hex->X, Hex->Y, Hex->Z, *Type);
 
@@ -96,7 +96,7 @@ void AHexagonMap::RetrieveMap()
 		}
 		UE_LOG(LogTemp, Warning, TEXT("Connected to server"));
 
-		Hexagon* Center = new Hexagon(CenterLocation.X, CenterLocation.Y, CenterLocation.Z, "", Direction::N);
+		Hexagon* Center = new Hexagon(CenterLocation.X, CenterLocation.Y, CenterLocation.Z, "",  std::map<std::string, std::string>{});
 		const std::vector<Hexagon> HexCV = HexagonClient->GetHexagonRing(Center, Diameter, true);
 		for(int i=0; i< HexCV.size(); i++)
 		{

@@ -18,35 +18,31 @@ void AHexagon::SetTypeAndDirection(FString TypeName,  EHexagonDirection NewDirec
 	HexMesh = Cast<UStaticMesh>(StaticLoadObject( UStaticMesh::StaticClass(), nullptr, *FName(MeshName).ToString()));
 	HexagonMeshComponent->SetStaticMesh(HexMesh);
 
-	HexagonMeshComponent->SetWorldRotation(FRotator(0.0f,60.0f * (static_cast<std::underlying_type_t<::Direction>>(NewDirection) - 1), 0.0f));
+	HexagonMeshComponent->SetWorldRotation(FRotator(0.0f,60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(NewDirection) - 1), 0.0f));
 	Direction = NewDirection;
 
 }
 
-EHexagonDirection AHexagon::ConvertDirection(::Direction Direction)
+EHexagonDirection AHexagon::ConvertDirection(std::string Direction)
 {
-	switch (Direction)
-	{
-	case Direction::N:
+	if(Direction ==  "N")
 		return EHexagonDirection::N;
-	case Direction::NE:
+	if(Direction ==  "NE")
 		return EHexagonDirection::NE;
-	case Direction::E:
+	if(Direction ==  "E")
 		return EHexagonDirection::E;
-	case Direction::SE:
+	if(Direction ==  "SE")
 		return EHexagonDirection::SE;
-	case Direction::S:
+	if(Direction ==  "S")
 		return EHexagonDirection::S;
-	case Direction::SW:
+	if(Direction ==  "SW")
 		return EHexagonDirection::SW;
-	case Direction::W:
+	if(Direction ==  "W")
 		return EHexagonDirection::W;
-	case Direction::NW:
+	if(Direction ==  "NW")
 		return EHexagonDirection::NW;
-	default:
-		return EHexagonDirection::CENTER;
-			
-	}
+	return EHexagonDirection::CENTER;
+	
 }
 
 void AHexagon::BeginPlay()
