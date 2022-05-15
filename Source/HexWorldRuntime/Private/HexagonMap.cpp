@@ -26,28 +26,29 @@ void AHexagonMap::Tick(float DeltaTime)
 
 	if(!HexCoordData->IsEmpty())
 	{
-		if(Hexagon* Hex = new Hexagon(0,0,0,"", std::map<std::string, std::string>{{"direction", "N"}}); HexCoordData->Dequeue(*Hex))
+		//if(Hexagon* Hex = new Hexagon(0,0,0,"", std::map<std::string, std::string>{{"direction", "N"}}); HexCoordData->Dequeue(*Hex))
+		UHexData* HexData;
+		if(HexCoordData->Dequeue(HexData))
 		{
-			const FString Type(Hex->Type.c_str());
-			const EHexagonDirection Direction = AHexagon::ConvertDirection(Hex->Data["direction"]);
-			const FVector Location = HexToLocation(Hex, 1500);
+			// const FString Type(Hex->Type.c_str());
+			const EHexagonDirection Direction = AHexagon::ConvertDirection(HexData->Data.Find("direction"));
+			const FVector Location = HexToLocation(HexData, 1500);
 			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
 
-			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), Hex->X, Hex->Y, Hex->Z, *Type);
+			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), HexData->Location.X, HexData->Location.Y, HexData->Location.Z, *HexData->Type);
 
 			FString BluePrintName("/HexWorld/");
 			
-			BluePrintName = BluePrintName.Append(Type).Append("/BP_").Append(Type).Append(".BP_").Append(Type);
+			BluePrintName = BluePrintName.Append(HexData->Type).Append("/BP_").Append(HexData->Type).Append(".BP_").Append(HexData->Type);
 			
 			UObject* SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(),NULL, *BluePrintName));
-
-			UBlueprint* GeneratedBP = Cast<UBlueprint>(SpawnActor);
 			if (!SpawnActor)
 			{
 				UE_LOG(LogTemp, Display, TEXT("Blueprint %s not found"), *BluePrintName);
 				return;
 			}
-
+			
+			UBlueprint* GeneratedBP = Cast<UBlueprint>(SpawnActor);
 			UClass* SpawnClass = SpawnActor->StaticClass();
 			if (SpawnClass == NULL)
 			{
@@ -55,17 +56,19 @@ void AHexagonMap::Tick(float DeltaTime)
 				return;
 			}
 
+	
 			FActorSpawnParameters SpawnParameters;
 			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
 			HexActor->Tags.Add(FName("Hexagon"));
 			HexActor->Modify(true);
-
+			
 			const FString StringPrintf = FString(TEXT("{0},{1},{2}"));
-			const FString StringFormatted = FString::Format(*StringPrintf, {Hex->X, Hex->Y, Hex->Z});
+			const FString StringFormatted = FString::Format(*StringPrintf, {HexData->Location.X, HexData->Location.Y, HexData->Location.Z});
 			HexActor->Tags.Add(FName(StringFormatted));
-			HexActor->Tags.Add(FName(Type));
+			HexActor->Tags.Add(FName(HexData->Type));
 
+			
 			//bool bSaved = FEditorFileUtils::SaveLevel(GetWorld()->GetLevel(0));
 			
 		}
@@ -100,16 +103,24 @@ void AHexagonMap::RetrieveMap()
 		const std::vector<Hexagon> HexCV = HexagonClient->GetHexagonRing(Center, Diameter, true);
 		for(int i=0; i< HexCV.size(); i++)
 		{
+			UHexData* HexData = NewObject<UHexData>();
+			HexData->Location.X = HexCV[i].X;
+			HexData->Location.Y = HexCV[i].Y;
+			HexData->Location.Z = HexCV[i].Z;
+			for(auto const&[ key, value]: HexCV[i].Data)
+			{
+				HexData->Data.Add(FString(key.c_str()), FString(value.c_str()));
+			}
 			UE_LOG(LogTemp, Display, TEXT("Enqueue %d [%d, %d, %d ] %s"), i, HexCV[i].X, HexCV[i].Y, HexCV[i].Z, *FString(HexCV[i].Type.c_str()));
-			HexCoordData->Enqueue(HexCV[i]);
+			HexCoordData->Enqueue(HexData);
 		}
 		
 	});	
 }
 
-FVector AHexagonMap::HexToLocation(const Hexagon* Hex, const int Size) const
+FVector AHexagonMap::HexToLocation(const UHexData* Hex, const int Size) const
 {
-	double x = Size * (sqrt(3.0) * Hex->X + sqrt(3.0)/2.0 * Hex->Y);
-	double y = Size * (3.0/2.0 * Hex->Y);
+	const double x = Size * (sqrt(3.0) * Hex->Location.X + sqrt(3.0)/2.0 * Hex->Location.Y);
+	const double y = Size * (3.0/2.0 * Hex->Location.Y);
 	return FVector(x, y, 0);	
 }

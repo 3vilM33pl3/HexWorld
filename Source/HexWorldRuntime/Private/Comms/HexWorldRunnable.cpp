@@ -3,12 +3,13 @@
 
 #include "Comms/HexWorldRunnable.h"
 
+#include "Actors/HexData.h"
 #include "hexworld/hex_lib.h"
 
 uint64 FHexWorldRunnable::ThreadNumber = 0;
 
 
-FHexWorldRunnable::FHexWorldRunnable(TCircularQueue<Hexagon>* Data, TFunction<void()> InFunction)
+FHexWorldRunnable::FHexWorldRunnable(TCircularQueue<UHexData*>* Data, TFunction<void()> InFunction)
 {
 	FunctionPointer = InFunction;
 	Finished = false;
@@ -51,7 +52,7 @@ void FHexWorldRunnable::Exit()
 	delete this;
 }
 
-FHexWorldRunnable* FHexWorldRunnable::RunLambdaOnBackgroundThread(TCircularQueue<Hexagon>* Data, TFunction<void()> InFunction)
+FHexWorldRunnable* FHexWorldRunnable::RunLambdaOnBackgroundThread(TCircularQueue<UHexData*>* Data, TFunction<void()> InFunction)
 {
 	if(FPlatformProcess::SupportsMultithreading())
 	{

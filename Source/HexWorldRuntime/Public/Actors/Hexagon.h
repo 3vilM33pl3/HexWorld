@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "HexData.h"
 #include "GameFramework/Actor.h"
 #include "hexworld/hex_lib.h"
 #include "Hexagon.generated.h"
@@ -28,27 +29,31 @@ class HEXWORLDRUNTIME_API AHexagon : public AActor
 public:
 	AHexagon();
 
-	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Static mesh component"))
+	UPROPERTY(BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Static mesh component"))
 	UStaticMeshComponent* HexagonMeshComponent;
 
-	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Static mesh"))
+	UPROPERTY(BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Static mesh"))
 	UStaticMesh* HexMesh;
 
-	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Hexagon location"))
+	UPROPERTY(BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Hexagon location"))
 	FIntVector Location;
 
 	UPROPERTY(BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Hexagon coordinates"))
-	FVector Coordinates;
+	FIntVector Coordinates;
 	
-	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Hexagon Direction"))
+	UPROPERTY(BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Hexagon Direction"))
 	EHexagonDirection Direction;
 
-	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Hexagon Type"))
+	UPROPERTY(BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Hexagon Type"))
 	FString Type = TEXT("0000-0000-0000-0000");
 
+	UPROPERTY(BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Hexagon Data"))
+	TMap<FString, FString> Data;
+
+	
 	void SetTypeAndDirection(FString Type, EHexagonDirection NewDirection);
 
-	static EHexagonDirection ConvertDirection(std::string Direction);
+	static EHexagonDirection ConvertDirection(FString* Direction);
 	
 protected:
 	virtual void BeginPlay() override;

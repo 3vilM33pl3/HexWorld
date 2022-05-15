@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actors/HexData.h"
 #include "Containers/CircularQueue.h"
 #include "hexworld/hex_lib.h"
 #include "HexWorldRunnable.generated.h"
@@ -37,7 +38,7 @@ private:
 	uint64 Number;
 	
 public:
-	FHexWorldRunnable(TCircularQueue<Hexagon>* Data ,TFunction< void()> InFunction);
+	FHexWorldRunnable(TCircularQueue<UHexData*>* Data ,TFunction< void()> InFunction);
 	~FHexWorldRunnable();
 
 	virtual bool Init() override;
@@ -45,8 +46,8 @@ public:
 	virtual void Stop() override;
 	virtual void Exit() override;
 
-	static FHexWorldRunnable* RunLambdaOnBackgroundThread(TCircularQueue<Hexagon>* Data ,TFunction<void()> InFunction);
+	static FHexWorldRunnable* RunLambdaOnBackgroundThread(TCircularQueue<UHexData*>* Data ,TFunction<void()> InFunction);
 private:
-	TCircularQueue<Hexagon>* HexCoordData;
+	TCircularQueue<UHexData*>* HexCoordData;
 	
 };

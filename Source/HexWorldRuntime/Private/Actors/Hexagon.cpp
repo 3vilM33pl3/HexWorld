@@ -23,23 +23,23 @@ void AHexagon::SetTypeAndDirection(FString TypeName,  EHexagonDirection NewDirec
 
 }
 
-EHexagonDirection AHexagon::ConvertDirection(std::string Direction)
+EHexagonDirection AHexagon::ConvertDirection(FString* Direction)
 {
-	if(Direction ==  "N")
+	if(Direction->Equals("N"))
 		return EHexagonDirection::N;
-	if(Direction ==  "NE")
+	if(Direction->Equals("NE"))
 		return EHexagonDirection::NE;
-	if(Direction ==  "E")
+	if(Direction->Equals("E"))
 		return EHexagonDirection::E;
-	if(Direction ==  "SE")
+	if(Direction->Equals("SE"))
 		return EHexagonDirection::SE;
-	if(Direction ==  "S")
+	if(Direction->Equals("S"))
 		return EHexagonDirection::S;
-	if(Direction ==  "SW")
+	if(Direction->Equals("SW"))
 		return EHexagonDirection::SW;
-	if(Direction ==  "W")
+	if(Direction->Equals("W"))
 		return EHexagonDirection::W;
-	if(Direction ==  "NW")
+	if(Direction->Equals("NW"))
 		return EHexagonDirection::NW;
 	return EHexagonDirection::CENTER;
 	

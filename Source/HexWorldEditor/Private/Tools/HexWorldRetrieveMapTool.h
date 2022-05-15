@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "InteractiveToolBuilder.h"
 #include "Actors/Hexagon.h"
+#include "Actors/HexData.h"
 #include "BaseTools/SingleClickTool.h"
 #include "Containers/CircularQueue.h"
 #include "hexworld/hex_lib.h"
@@ -43,7 +44,7 @@ public:
 	UFUNCTION(CallInEditor, Category = Options)
 	void RetrieveMap();
 	
-	TCircularQueue<Hexagon>* HexCoordData = new TCircularQueue<Hexagon>(24);
+	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(24);
 
 };
 
@@ -67,7 +68,7 @@ protected:
 
 private:
 	virtual void OnTick(float DeltaTime) override;
-	FVector HexToLocation(const Hexagon* Hex, const int Size) const;
+	FVector HexToLocation(const UHexData* Hex, const int Size) const;
 	
 };
 

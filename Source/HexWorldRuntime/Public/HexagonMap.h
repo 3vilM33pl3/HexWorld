@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actors/HexData.h"
 #include "Containers/CircularQueue.h"
 #include "GameFramework/Actor.h"
 #include "hexworld/hex_lib.h"
@@ -36,8 +37,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Secure connection over SSL"))
 	bool bSecure = false;
 
-	TCircularQueue<Hexagon>* HexCoordData = new TCircularQueue<Hexagon>(120);
+	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(120);
 
-	FVector HexToLocation(const Hexagon* Hex, const int Size) const;
+	FVector HexToLocation(const UHexData* Hex, const int Size) const;
 	
 };
