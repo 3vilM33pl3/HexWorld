@@ -1,6 +1,7 @@
 #include "HexWorldRetrieveMapTool.h"
 
 #include "FileHelpers.h"
+#include "HexWorldDataAsset.h"
 #include "InteractiveToolManager.h"
 #include "Actors/Hexagon.h"
 #include "Actors/HexData.h"
@@ -8,6 +9,7 @@
 #include "Engine/World.h"
 #include "hexworld/hex_client.h"
 #include "Kismet/GameplayStatics.h"
+#include "UObject/ConstructorHelpers.h"
 
 #define LOCTEXT_NAMESPACE "HexWorldRetrieveMapTool"
 
@@ -125,28 +127,17 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 				return;
 			}
 
+			FString DataAssetName("/HexWorld/");
+			DataAssetName = DataAssetName.Append(Type).Append("/DA_").Append(Type).Append(".DA_").Append(Type);
+			UHexWorldDataAsset* HexDataAsset = Cast<UHexWorldDataAsset>(StaticLoadObject(UObject::StaticClass(),NULL, *DataAssetName));
 			
-				
-			FActorSpawnParameters SpawnParameters;
-			AActor* HexActorTemplate = Cast<AActor>(GeneratedBP->GeneratedClass.GetDefaultObject());
-			HexActorTemplate->Tags.Add(FName("Hexagon"));
-			const FString StringPrintf = FString(TEXT("{0},{1},{2}"));
-			const FString StringFormatted = FString::Format(*StringPrintf, { HexData->Location.X, HexData->Location.Y, HexData->Location.Z});
-			HexActorTemplate->Tags.Add(FName(StringFormatted));
-			HexActorTemplate->Tags.Add(FName(Type));
-			SpawnParameters.Template = HexActorTemplate;
+			HexDataAsset->Data = HexData->Data;
+			HexDataAsset->Location = HexData->Location;
+			HexDataAsset->Type = HexData->Type;
 						
+			FActorSpawnParameters SpawnParameters;
 			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
-			// AHexagon* HexActor = GetWorld()->SpawnActor<AHexagon>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
 			HexActor->Modify(true);
-
-			USceneComponent* Root = HexActor->GetDefaultAttachComponent();
-
-			AHexagon* HexMeta = GetWorld()->SpawnActor<AHexagon>();
-			HexMeta->Data = HexData->Data;
-			HexMeta->SetActorLabel(StringFormatted);
-			HexMeta->Tags.Add(FName(StringFormatted));
-			HexMeta->AttachToComponent(Root, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 			
 			//bool bSaved = FEditorFileUtils::SaveLevel(GetWorld()->GetLevel(0));
 			
