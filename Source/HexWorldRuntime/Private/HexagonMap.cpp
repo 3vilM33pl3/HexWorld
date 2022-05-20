@@ -31,7 +31,7 @@ void AHexagonMap::Tick(float DeltaTime)
 		if(HexCoordData->Dequeue(HexData))
 		{
 			// const FString Type(Hex->Type.c_str());
-			const EHexagonDirection Direction = AHexagon::ConvertDirection(HexData->Data.Find("direction"));
+			const EHexagonDirection Direction = AHexagon::ConvertDirection(HexData->LocalData.Find("direction"));
 			const FVector Location = HexToLocation(HexData, 1500);
 			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
 
@@ -99,7 +99,7 @@ void AHexagonMap::RetrieveMap()
 		}
 		UE_LOG(LogTemp, Warning, TEXT("Connected to server"));
 
-		Hexagon* Center = new Hexagon(CenterLocation.X, CenterLocation.Y, CenterLocation.Z, "",  std::map<std::string, std::string>{});
+		Hexagon* Center = new Hexagon(CenterLocation.X, CenterLocation.Y, CenterLocation.Z, "");
 		const std::vector<Hexagon> HexCV = HexagonClient->GetHexagonRing(Center, Diameter, true);
 		for(int i=0; i< HexCV.size(); i++)
 		{
@@ -107,9 +107,13 @@ void AHexagonMap::RetrieveMap()
 			HexData->Location.X = HexCV[i].X;
 			HexData->Location.Y = HexCV[i].Y;
 			HexData->Location.Z = HexCV[i].Z;
-			for(auto const&[ key, value]: HexCV[i].Data)
+			for(auto const&[ key, value]: HexCV[i].LocalData)
 			{
-				HexData->Data.Add(FString(key.c_str()), FString(value.c_str()));
+				HexData->LocalData.Add(FString(key.c_str()), FString(value.c_str()));
+			}
+			for(auto const&[ key, value]: HexCV[i].GlobalData)
+			{
+				HexData->GlobalData.Add(FString(key.c_str()), FString(value.c_str()));
 			}
 			UE_LOG(LogTemp, Display, TEXT("Enqueue %d [%d, %d, %d ] %s"), i, HexCV[i].X, HexCV[i].Y, HexCV[i].Z, *FString(HexCV[i].Type.c_str()));
 			HexCoordData->Enqueue(HexData);

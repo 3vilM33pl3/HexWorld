@@ -43,6 +43,8 @@ public:
 
 	UFUNCTION(CallInEditor, Category = Options)
 	void RetrieveMap();
+
+
 	
 	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(24);
 

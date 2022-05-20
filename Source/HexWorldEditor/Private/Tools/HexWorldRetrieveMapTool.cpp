@@ -49,7 +49,7 @@ void UHexWorldRetrieveMapProperties::RetrieveMap()
 		}
 		UE_LOG(LogTemp, Warning, TEXT("Connected to server"));
 
-		Hexagon* Center = new Hexagon(CenterLocation.X, CenterLocation.Y, CenterLocation.Z, "", std::map<std::string, std::string>{});
+		Hexagon* Center = new Hexagon(CenterLocation.X, CenterLocation.Y, CenterLocation.Z, "");
 		const std::vector<Hexagon> HexCV = HexagonClient->GetHexagonRing(Center, Diameter, true);
 		for(int i=0; i< HexCV.size(); i++)
 		{
@@ -58,9 +58,13 @@ void UHexWorldRetrieveMapProperties::RetrieveMap()
 			HexData->Location.Y = HexCV[i].Y;
 			HexData->Location.Z = HexCV[i].Z;
 			HexData->Type = FString(HexCV[i].Type.c_str());
-			for(auto const&[ key, value]: HexCV[i].Data)
+			for(auto const&[ key, value]: HexCV[i].LocalData)
 			{
-				HexData->Data.Add(FString(key.c_str()), FString(value.c_str()));
+				HexData->LocalData.Add(FString(key.c_str()), FString(value.c_str()));
+			}
+			for(auto const&[ key, value]: HexCV[i].GlobalData)
+			{
+				HexData->GlobalData.Add(FString(key.c_str()), FString(value.c_str()));
 			}
 			UE_LOG(LogTemp, Display, TEXT("Enqueue %d [%d, %d, %d ] %s"), i, HexCV[i].X, HexCV[i].Y, HexCV[i].Z, *FString(HexCV[i].Type.c_str()));
 			HexCoordData->Enqueue(HexData);
@@ -90,19 +94,18 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 {
 	if(!Properties->HexCoordData->IsEmpty())
 	{
-		// if(Hexagon* Hex = new Hexagon(0,0,0,"", std::map<std::string, std::string>{}); Properties->HexCoordData->Dequeue(*Hex))
 		UHexData* HexData;
 		if(Properties->HexCoordData->Dequeue(HexData))
 		{
 			const FString Type(HexData->Type);
 			EHexagonDirection Direction = EHexagonDirection::N;
-			if(HexData->Data.Contains("direction"))
+			if(HexData->LocalData.Contains("direction"))
 			{
-				Direction = AHexagon::ConvertDirection(HexData->Data.Find("direction"));
+				Direction = AHexagon::ConvertDirection(HexData->LocalData.Find("direction"));
 			} 
 			
 			const FVector Location = HexToLocation(HexData, 1500);
-			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
+			//const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
 
 			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), HexData->Location.X, HexData->Location.Y, HexData->Location.Z, *Type);
 
@@ -119,7 +122,7 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 				UE_LOG(LogTemp, Display, TEXT("Blueprint %s not found"), *BluePrintName);
 				return;
 			}
-
+			
 			UClass* SpawnClass = SpawnActor->StaticClass();
 			if (SpawnClass == NULL)
 			{
@@ -131,15 +134,25 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			DataAssetName = DataAssetName.Append(Type).Append("/DA_").Append(Type).Append(".DA_").Append(Type);
 			UHexWorldDataAsset* HexDataAsset = Cast<UHexWorldDataAsset>(StaticLoadObject(UObject::StaticClass(),NULL, *DataAssetName));
 			
-			HexDataAsset->Data = HexData->Data;
+//			HexDataAsset->LocalData.Add(UHexWorldDataAsset::CombinePair(HexData->Location.X, HexData->Location.Y), FLocalHexagon{HexData->LocalData}); 
+			
+			for(auto data : HexData->GlobalData)
+			{
+				HexDataAsset->GlobalData.Add(data.Key, data.Value);	
+			}
 			HexDataAsset->Location = HexData->Location;
 			HexDataAsset->Type = HexData->Type;
 						
 			FActorSpawnParameters SpawnParameters;
-			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
-			HexActor->Modify(true);
+			FGuid guid = FGuid::NewGuid();
 			
-			//bool bSaved = FEditorFileUtils::SaveLevel(GetWorld()->GetLevel(0));
+			SpawnParameters.OverrideActorGuid = guid;
+			HexDataAsset->LocalData.Add(guid, FLocalHexagon{HexData->LocalData}); 
+			
+			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, FRotator{}, SpawnParameters);
+			HexActor->Modify(true);
+			HexActor->Tags.Add("Hexagon");
+			
 			
 		}
 	}	

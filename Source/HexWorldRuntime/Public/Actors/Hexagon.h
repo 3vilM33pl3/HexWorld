@@ -1,9 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "HexData.h"
 #include "GameFramework/Actor.h"
-#include "hexworld/hex_lib.h"
 #include "Hexagon.generated.h"
 
 UENUM()

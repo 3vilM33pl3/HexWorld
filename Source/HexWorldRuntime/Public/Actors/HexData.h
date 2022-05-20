@@ -7,7 +7,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class HEXWORLDRUNTIME_API UHexData : public UObject
 {
 	GENERATED_BODY()
@@ -15,13 +15,15 @@ class HEXWORLDRUNTIME_API UHexData : public UObject
 public:
 	UHexData() {};
 
-	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Type"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Type"))
 	FString Type;
 
-	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Type"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Type"))
 	FIntVector Location;
 	
-	UPROPERTY(EditAnywhere, Category = HexWorld, meta = (DisplayName = "Data"))
-	TMap<FString, FString> Data;
-	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Data"))
+	TMap<FString, FString> GlobalData;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Data"))
+	TMap<FString, FString> LocalData;
 };
