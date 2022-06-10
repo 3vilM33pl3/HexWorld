@@ -1,6 +1,5 @@
 #include "HexWorldRetrieveMapTool.h"
 
-#include "FileHelpers.h"
 #include "HexWorldDataAsset.h"
 #include "InteractiveToolManager.h"
 #include "Actors/Hexagon.h"
@@ -9,7 +8,6 @@
 #include "Engine/World.h"
 #include "hexworld/hex_client.h"
 #include "Kismet/GameplayStatics.h"
-#include "UObject/ConstructorHelpers.h"
 
 #define LOCTEXT_NAMESPACE "HexWorldRetrieveMapTool"
 
@@ -30,7 +28,7 @@ void UHexWorldRetrieveMapProperties::RetrieveMap()
 		TArray<AActor*> FoundActors;
 		UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Hexagon"), FoundActors);
 
-		for(auto& Hex: FoundActors)
+		for(AActor* Hex: FoundActors)
 		{
 			Hex->Destroy();
 		}
@@ -133,8 +131,11 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			FString DataAssetName("/HexWorld/");
 			DataAssetName = DataAssetName.Append(Type).Append("/DA_").Append(Type).Append(".DA_").Append(Type);
 			UHexWorldDataAsset* HexDataAsset = Cast<UHexWorldDataAsset>(StaticLoadObject(UObject::StaticClass(),NULL, *DataAssetName));
-			
-//			HexDataAsset->LocalData.Add(UHexWorldDataAsset::CombinePair(HexData->Location.X, HexData->Location.Y), FLocalHexagon{HexData->LocalData}); 
+			if (!HexDataAsset)
+			{
+				UE_LOG(LogTemp, Display, TEXT("Data Asset %s not found"), *DataAssetName);
+				return;
+			}
 			
 			for(auto data : HexData->GlobalData)
 			{
@@ -145,14 +146,20 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 						
 			FActorSpawnParameters SpawnParameters;
 			FGuid guid = FGuid::NewGuid();
-			
-			SpawnParameters.OverrideActorGuid = guid;
+
+			// Setting GUID before spawn so that it can be saved in the data asset before the Blueprints construction scripts runs
+			SpawnParameters.OverrideActorGuid = guid; 
 			HexDataAsset->LocalData.Add(guid, FLocalHexagon{HexData->LocalData}); 
 			
 			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, FRotator{}, SpawnParameters);
 			HexActor->Modify(true);
 			HexActor->Tags.Add("Hexagon");
+
+			const FString DirectionStr = FString("direction:").Append(ToCStr(*HexData->LocalData.Find("direction"))); 
+			const FString LocationStr = FString::Printf(TEXT("location:%d:%d"), HexData->Location.X, HexData->Location.Y);
 			
+			HexActor->Tags.Add(ToCStr(DirectionStr));
+			HexActor->Tags.Add(ToCStr(LocationStr));
 			
 		}
 	}	

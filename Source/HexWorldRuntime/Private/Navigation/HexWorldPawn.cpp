@@ -14,11 +14,11 @@ AHexWorldPawn::AHexWorldPawn()
 
 	CarrierVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualRepresentation"));
 	CarrierVisual->SetupAttachment(RootComponent);
+	
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CarrierVisualAsset(TEXT("/HexWorld/Narrowboat/SM_Narrowboat.SM_Narrowboat"));
 	if (CarrierVisualAsset.Succeeded())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Carrier static mesh loaded"));
-
 		Carrier = CarrierVisualAsset.Object;
 		CarrierVisual->SetStaticMesh(Carrier);
 		CarrierVisual->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
@@ -44,7 +44,8 @@ void AHexWorldPawn::BeginPlay()
 	
 	Length = BezierCurveFunctions::CubicBezierLengthEstimate(P0, P1, P2, P3, SegmentInterval);
 	this->SetActorLocation(this->GetActorLocation());
-	
+	this->SetActorEnableCollision(true);
+		
 }
 
 void AHexWorldPawn::Tick(float DeltaTime)
