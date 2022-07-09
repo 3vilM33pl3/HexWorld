@@ -22,6 +22,8 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	
+
 	UFUNCTION(BlueprintCallable, Category = Options)
 	void RetrieveMap();
 

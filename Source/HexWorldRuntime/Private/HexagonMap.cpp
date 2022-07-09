@@ -3,6 +3,7 @@
 
 #include "HexagonMap.h"
 
+#include "HexWorldDataAsset.h"
 #include "Actors/Hexagon.h"
 #include "Comms/HexWorldRunnable.h"
 #include "hexworld/hex_client.h"
@@ -20,35 +21,44 @@ void AHexagonMap::BeginPlay()
 	
 }
 
+
+
+
 void AHexagonMap::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	if(!HexCoordData->IsEmpty())
 	{
-		//if(Hexagon* Hex = new Hexagon(0,0,0,"", std::map<std::string, std::string>{{"direction", "N"}}); HexCoordData->Dequeue(*Hex))
 		UHexData* HexData;
 		if(HexCoordData->Dequeue(HexData))
 		{
-			// const FString Type(Hex->Type.c_str());
-			const EHexagonDirection Direction = AHexagon::ConvertDirection(HexData->LocalData.Find("direction"));
+			const FString Type(HexData->Type);
+			EHexagonDirection Direction = EHexagonDirection::N;
+			if(HexData->LocalData.Contains("direction"))
+			{
+				Direction = AHexagon::ConvertDirection(HexData->LocalData.Find("direction"));
+			} 
+			
 			const FVector Location = HexToLocation(HexData, 1500);
-			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
+			//const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
 
-			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), HexData->Location.X, HexData->Location.Y, HexData->Location.Z, *HexData->Type);
+			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), HexData->Location.X, HexData->Location.Y, HexData->Location.Z, *Type);
 
 			FString BluePrintName("/HexWorld/");
 			
-			BluePrintName = BluePrintName.Append(HexData->Type).Append("/BP_").Append(HexData->Type).Append(".BP_").Append(HexData->Type);
+			BluePrintName = BluePrintName.Append(Type).Append("/BP_").Append(Type).Append(".BP_").Append(Type);
 			
 			UObject* SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(),NULL, *BluePrintName));
+
+			UBlueprint* GeneratedBP = Cast<UBlueprint>(SpawnActor);
+						
 			if (!SpawnActor)
 			{
 				UE_LOG(LogTemp, Display, TEXT("Blueprint %s not found"), *BluePrintName);
 				return;
 			}
 			
-			UBlueprint* GeneratedBP = Cast<UBlueprint>(SpawnActor);
 			UClass* SpawnClass = SpawnActor->StaticClass();
 			if (SpawnClass == NULL)
 			{
@@ -56,24 +66,43 @@ void AHexagonMap::Tick(float DeltaTime)
 				return;
 			}
 
-	
+			FString DataAssetName("/HexWorld/");
+			DataAssetName = DataAssetName.Append(Type).Append("/DA_").Append(Type).Append(".DA_").Append(Type);
+			UHexWorldDataAsset* HexDataAsset = Cast<UHexWorldDataAsset>(StaticLoadObject(UObject::StaticClass(),NULL, *DataAssetName));
+			if (!HexDataAsset)
+			{
+				UE_LOG(LogTemp, Display, TEXT("Data Asset %s not found"), *DataAssetName);
+				return;
+			}
+			
+			for(auto data : HexData->GlobalData)
+			{
+				HexDataAsset->GlobalData.Add(data.Key, data.Value);	
+			}
+			HexDataAsset->Location = HexData->Location;
+			HexDataAsset->Type = HexData->Type;
+						
 			FActorSpawnParameters SpawnParameters;
-			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
-			HexActor->Tags.Add(FName("Hexagon"));
-			HexActor->Modify(true);
-			
-			const FString StringPrintf = FString(TEXT("{0},{1},{2}"));
-			const FString StringFormatted = FString::Format(*StringPrintf, {HexData->Location.X, HexData->Location.Y, HexData->Location.Z});
-			HexActor->Tags.Add(FName(StringFormatted));
-			HexActor->Tags.Add(FName(HexData->Type));
+			FGuid guid = FGuid::NewGuid();
 
+			// Setting GUID before spawn so that it can be saved in the data asset before the Blueprints construction scripts runs
+			SpawnParameters.OverrideActorGuid = guid; 
+			HexDataAsset->LocalData.Add(guid, FLocalHexagon{HexData->LocalData}); 
 			
-			//bool bSaved = FEditorFileUtils::SaveLevel(GetWorld()->GetLevel(0));
+			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, FRotator{}, SpawnParameters);
+			HexActor->Modify(true);
+			HexActor->Tags.Add("Hexagon");
+
+			const FString DirectionStr = FString("direction:").Append(ToCStr(*HexData->LocalData.Find("direction"))); 
+			const FString LocationStr = FString::Printf(TEXT("location:%d:%d"), HexData->Location.X, HexData->Location.Y);
+			
+			HexActor->Tags.Add(ToCStr(DirectionStr));
+			HexActor->Tags.Add(ToCStr(LocationStr));
 			
 		}
-	}	
-}
+	}
+}	
+
 
 void AHexagonMap::RetrieveMap()
 {
