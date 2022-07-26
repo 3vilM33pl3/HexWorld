@@ -1,6 +1,9 @@
 ﻿#include "Navigation/NavigationGate.h"
 
+#if WITH_EDITOR
 #include "Editor.h"
+#endif
+
 #include "Kismet/GameplayStatics.h"
 #include "Navigation/BezierCurveFunctions.h"
 #include "UObject/ConstructorHelpers.h"
@@ -85,7 +88,10 @@ void ANavigationGate::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 			if (UStaticMeshComponent* MeshComp = Cast<UStaticMeshComponent>(Comp))
 			{
 				GateVisual->SetStaticMesh(Gate); // Update the component to the new mesh
+#if WITH_EDITOR
 				GEditor->EditorUpdateComponents();
+#endif
+				
 			}
 		}
 	}

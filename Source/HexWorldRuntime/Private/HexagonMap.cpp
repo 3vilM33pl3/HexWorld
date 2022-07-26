@@ -84,9 +84,9 @@ void AHexagonMap::Tick(float DeltaTime)
 						
 			FActorSpawnParameters SpawnParameters;
 			FGuid guid = FGuid::NewGuid();
-
+			
 			// Setting GUID before spawn so that it can be saved in the data asset before the Blueprints construction scripts runs
-			SpawnParameters.OverrideActorGuid = guid; 
+			// SpawnParameters.OverrideActorGuid = guid; 
 			HexDataAsset->LocalData.Add(guid, FLocalHexagon{HexData->LocalData}); 
 			
 			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, FRotator{}, SpawnParameters);

@@ -34,11 +34,20 @@ public class HexWorldRuntime : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"UnrealEd",
-				"EditorFramework",
 				"HexWorldLibrary"
 			}
 		);
+		
+		if (Target.Type == TargetType.Editor)
+		{
+			PrivateDependencyModuleNames.AddRange(
+				new string[]
+				{													
+					"UnrealEd",
+					"EditorFramework",
+				}
+			);
+		}
 		
 		
 		DynamicallyLoadedModuleNames.AddRange(
