@@ -6,6 +6,7 @@
 #include "Actors/HexData.h"
 #include "BaseTools/SingleClickTool.h"
 #include "Containers/CircularQueue.h"
+#include "hexworld/hex_client.h"
 #include "hexworld/hex_lib.h"
 #include "HexWorldRetrieveMapTool.generated.h"
 
@@ -35,18 +36,22 @@ public:
 	UPROPERTY(EditAnywhere, Category = Options, meta = (DisplayName = "Clear existing map before retrieving"))
 	bool bClearMap;
 
+	UFUNCTION(CallInEditor, Category = Options)
+	void RetrieveMap();
+	
 	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Backend server address"))
 	FString Address = "localhost:8080";
 	
 	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Secure connection over SSL"))
 	bool bSecure = false;
 
-	UFUNCTION(CallInEditor, Category = Options)
-	void RetrieveMap();
-
-
+	UFUNCTION(CallInEditor, Category= Connection)
+	void TestConnection();
 	
 	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(24);
+
+private:
+	HexagonClient* HexagonClient;
 
 };
 

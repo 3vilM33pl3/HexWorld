@@ -37,7 +37,10 @@ void UHexWorldRetrieveMapProperties::RetrieveMap()
 	
 	FHexWorldRunnable::RunLambdaOnBackgroundThread(HexCoordData, [&]
 	{
-		HexagonClient* HexagonClient = new ::HexagonClient(std::string(TCHAR_TO_UTF8(*Address)), bSecure);
+		if(!HexagonClient)
+		{
+			this->HexagonClient = new ::HexagonClient(std::string(TCHAR_TO_UTF8(*Address)), bSecure);
+		}
 		const auto Status = HexagonClient->ConnectToServer();
 
 		if(Status != HEXWORLD_CONNECTION_READY)
@@ -67,8 +70,27 @@ void UHexWorldRetrieveMapProperties::RetrieveMap()
 			UE_LOG(LogTemp, Display, TEXT("Enqueue %d [%d, %d, %d ] %s"), i, HexCV[i].X, HexCV[i].Y, HexCV[i].Z, *FString(HexCV[i].Type.c_str()));
 			HexCoordData->Enqueue(HexData);
 		}
-		
 	});
+}
+
+void UHexWorldRetrieveMapProperties::TestConnection()
+{
+	if(!HexagonClient)
+	{
+		HexagonClient = new ::HexagonClient(std::string(TCHAR_TO_UTF8(*Address)), bSecure);
+	}
+
+	auto State = HexagonClient->GetConnectionState();
+
+	switch (State)
+	{
+	case hw_conn_state::HEXWORLD_CONNECTION_IDLE:
+		UE_LOG(LogTemp, Warning, TEXT("Connection idle"));
+		break;
+	case hw_conn_state::HEXWORLD_CONNECTION_READY:
+		UE_LOG(LogTemp, Warning, TEXT("Connection ready"));
+		break;
+	}
 }
 
 UHexWorldRetrieveMapTool::UHexWorldRetrieveMapTool()

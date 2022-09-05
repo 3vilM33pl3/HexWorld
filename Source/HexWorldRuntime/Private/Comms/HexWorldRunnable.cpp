@@ -27,7 +27,27 @@ FHexWorldRunnable::~FHexWorldRunnable()
 	Thread = nullptr;
 }
 
-bool FHexWorldRunnable::Init()
+bool FHexWorldRunnable::
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Init()
 {
 	return true;
 }
