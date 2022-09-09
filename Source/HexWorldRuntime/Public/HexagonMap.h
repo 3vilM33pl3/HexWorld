@@ -8,6 +8,7 @@
 #include "hexworld/hex_lib.h"
 #include "HexagonMap.generated.h"
 
+class HexagonClient;
 UCLASS()
 class HEXWORLDRUNTIME_API AHexagonMap : public AActor
 {
@@ -25,7 +26,7 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable, Category = Options)
-	void RetrieveMap();
+	void RetrieveMap(bool bClearMap);
 
 	UPROPERTY(EditAnywhere, Category = Options, meta = (DisplayName = "Use this location as center of the map"))
 	FIntVector CenterLocation = FIntVector{0,0,0};
@@ -42,5 +43,8 @@ public:
 	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(120);
 
 	FVector HexToLocation(const UHexData* Hex, const int Size) const;
+
+private:
+	HexagonClient* HexagonClient;
 	
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HexagonMap.h"
 #include "InteractiveToolBuilder.h"
 #include "Actors/Hexagon.h"
 #include "Actors/HexData.h"
@@ -25,7 +26,6 @@ UCLASS(Transient)
 class HEXWORLDEDITOR_API UHexWorldRetrieveMapProperties : public UInteractiveToolPropertySet
 {
 	GENERATED_BODY()
-	
 public:
 	UPROPERTY(EditAnywhere, Category = Options, meta = (DisplayName = "Use this location as center of the map"))
 	FIntVector CenterLocation = FIntVector{0,0,0};
@@ -50,8 +50,10 @@ public:
 	
 	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(24);
 
-private:
-	HexagonClient* HexagonClient;
+	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Hexagon map"))
+	AHexagonMap* HexagonMap;
+
+	
 
 };
 

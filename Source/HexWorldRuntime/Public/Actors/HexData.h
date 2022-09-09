@@ -18,12 +18,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Type"))
 	FString Type;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Type"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Location"))
 	FIntVector Location;
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Data"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Global Data"))
 	TMap<FString, FString> GlobalData;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Data"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Local Data"))
 	TMap<FString, FString> LocalData;
 };

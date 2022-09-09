@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Navigation/NavigationGate.h"
 #include "Hexagon.generated.h"
 
 UENUM()
@@ -48,6 +49,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Hexagon Data"))
 	TMap<FString, FString> Data;
 
+	UPROPERTY(BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Hexagon Navigation Gate"))
+	ANavigationGate* NavigationGate;
 	
 	void SetTypeAndDirection(FString Type, EHexagonDirection NewDirection);
 
