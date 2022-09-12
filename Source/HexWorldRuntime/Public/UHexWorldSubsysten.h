@@ -19,9 +19,9 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	
-	AHexagonMap* GetHexagonMap() const { return HexagonMap; }
+	UHexagonMap* GetHexagonMap() const { return HexagonMap; }
 
 private:
-	AHexagonMap* HexagonMap;
+	UHexagonMap* HexagonMap;
 
 };

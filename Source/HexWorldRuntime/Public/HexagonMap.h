@@ -10,20 +10,12 @@
 
 class HexagonClient;
 UCLASS()
-class HEXWORLDRUNTIME_API AHexagonMap : public AActor
+class HEXWORLDRUNTIME_API UHexagonMap : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	AHexagonMap();
-
-protected:
-	virtual void BeginPlay() override;
-
-public:
-	virtual void Tick(float DeltaTime) override;
-
-	
+	UHexagonMap();
 
 	UFUNCTION(BlueprintCallable, Category = Options)
 	void RetrieveMap(bool bClearMap);

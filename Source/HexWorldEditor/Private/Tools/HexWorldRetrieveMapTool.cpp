@@ -68,7 +68,7 @@ void UHexWorldRetrieveMapTool::Setup()
 	Super::Setup();
 
 	Properties = NewObject<UHexWorldRetrieveMapProperties>(this);
-	Properties->HexagonMap = NewObject<AHexagonMap>(this);
+	Properties->HexagonMap = NewObject<UHexagonMap>(this);
 	
 	AddToolPropertySource(Properties);
 	

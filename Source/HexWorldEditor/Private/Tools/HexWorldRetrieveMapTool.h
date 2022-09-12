@@ -51,7 +51,7 @@ public:
 	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(24);
 
 	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Hexagon map"))
-	AHexagonMap* HexagonMap;
+	UHexagonMap* HexagonMap;
 
 	
 

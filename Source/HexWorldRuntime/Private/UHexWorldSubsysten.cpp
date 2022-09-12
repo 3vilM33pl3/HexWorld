@@ -18,7 +18,7 @@ void UUHexWorldSubsysten::Initialize(FSubsystemCollectionBase& Collection)
 		Hex->Destroy();
 	}
 
-	HexagonMap = NewObject<AHexagonMap>(this);
+	HexagonMap = NewObject<UHexagonMap>(this);
 	HexagonMap->RetrieveMap(true);
 }
 

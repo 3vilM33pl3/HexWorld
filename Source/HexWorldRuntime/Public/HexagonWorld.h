@@ -25,5 +25,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	FVector HexToLocation(const UHexData* Hex, int Size) const;
 	UUHexWorldSubsysten* HexWorldSubsysten;
-	AHexagonMap* HexagonMap;
+	UHexagonMap* HexagonMap;
 };
