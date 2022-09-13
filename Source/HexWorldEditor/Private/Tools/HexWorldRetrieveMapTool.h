@@ -67,8 +67,9 @@ public:
 
 	virtual void Setup() override;
 	virtual void SetWorld(UWorld* World);
-	
-	
+	void AddLabel(const FIntVector* Location) const;
+
+
 protected:
 	UPROPERTY()
 	TObjectPtr<UHexWorldRetrieveMapProperties> Properties;
@@ -77,7 +78,7 @@ protected:
 
 private:
 	virtual void OnTick(float DeltaTime) override;
-	FVector HexToLocation(const UHexData* Hex, const int Size) const;
+	FVector HexToLocation(const FIntVector* Location, const int Size) const;
 	
 };
 

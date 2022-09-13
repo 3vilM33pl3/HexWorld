@@ -6,10 +6,14 @@
 #include "Actors/Hexagon.h"
 #include "Actors/HexData.h"
 #include "Comms/HexWorldRunnable.h"
+#include "Components/TextRenderComponent.h"
+#include "Engine/TextRenderActor.h"
 #include "Engine/World.h"
 #include "hexworld/hex_client.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Navigation/NavigationGate.h"
+#include "Subsystems/UnrealEditorSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "HexWorldRetrieveMapTool"
 
@@ -79,6 +83,20 @@ void UHexWorldRetrieveMapTool::SetWorld(UWorld* World)
 	this->TargetWorld = World;
 }
 
+void UHexWorldRetrieveMapTool::AddLabel(const FIntVector* Location) const
+{
+	const FVector WorldLocation = HexToLocation(Location, 1500.0f);
+
+	const FVector TextLocation = FVector(WorldLocation.X, WorldLocation.Y, WorldLocation.Z + 1000);
+	ATextRenderActor* Text = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), TextLocation, FRotator(0.f, 90.f, 0.f));
+
+	const FString LocationStr = FString::Printf(TEXT("X:%d Y:%d Z:%d"), Location->X, Location->Y, Location->Z);
+	Text->GetTextRender()->SetText(FText::FromString(LocationStr));
+	Text->GetTextRender()->SetTextRenderColor(FColor::White);
+	Text->SetActorScale3D(FVector(5.f, 5.f, 5.f));
+	
+}
+
 void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 {
 		
@@ -94,7 +112,7 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 				Direction = AHexagon::ConvertDirection(HexData->LocalData.Find("direction"));
 			} 
 			
-			const FVector Location = HexToLocation(HexData, 1500);
+			const FVector WorldLocation = HexToLocation(&HexData->Location, 1500);
 			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
 
 			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), HexData->Location.X, HexData->Location.Y, HexData->Location.Z, *Type);
@@ -103,7 +121,7 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			
 			BluePrintName = BluePrintName.Append(Type).Append("/BP_").Append(Type).Append(".BP_").Append(Type);
 			
-			UObject* SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(),NULL, *BluePrintName));
+			UObject* SpawnActor = Cast<UObject>(StaticLoadObject(UObject::StaticClass(), nullptr, *BluePrintName));
 
 			UBlueprint* GeneratedBP = Cast<UBlueprint>(SpawnActor);
 						
@@ -112,9 +130,8 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 				UE_LOG(LogTemp, Display, TEXT("Blueprint %s not found"), *BluePrintName);
 				return;
 			}
-			
-			UClass* SpawnClass = SpawnActor->StaticClass();
-			if (SpawnClass == NULL)
+
+			if (UClass* SpawnClass = SpawnActor->StaticClass(); SpawnClass == nullptr)
 			{
 				UE_LOG(LogTemp, Display, TEXT("Blueprint %s StaticClass == NULL"), *BluePrintName);
 				return;
@@ -143,7 +160,7 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			SpawnParameters.OverrideActorGuid = guid; 
 			HexDataAsset->LocalData.Add(guid, FLocalHexagon{HexData->LocalData}); 
 			
-			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, Location, Rotation, SpawnParameters);
+			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, WorldLocation, Rotation, SpawnParameters);
 			HexActor->Modify(true);
 			HexActor->Tags.Add("Hexagon");
 
@@ -153,17 +170,35 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			HexActor->Tags.Add(ToCStr(DirectionStr));
 			HexActor->Tags.Add(ToCStr(LocationStr));
 
-			ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), Location, FRotator{}, SpawnParameters);
+			ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), WorldLocation, FRotator{}, SpawnParameters);
 			NavigationGate->SetOwner(HexActor);
+
+			AddLabel(&HexData->Location);
 			
 		}
-	}	
+			
+	}
+
+	TArray<AActor*> HexagonLabels;	
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATextRenderActor::StaticClass(), HexagonLabels);
+
+	for(AActor* HexagonLabel : HexagonLabels)
+	{
+		FVector CameraLocation;
+		FRotator CameraRotation;
+		UUnrealEditorSubsystem* EditorSubsysten = GEditor->GetEditorSubsystem<UUnrealEditorSubsystem>();
+		EditorSubsysten->GetLevelViewportCameraInfo(CameraLocation, CameraRotation);
+
+		FRotator LookAtRotator = UKismetMathLibrary::FindLookAtRotation(HexagonLabel->GetActorLocation(), CameraLocation);
+		HexagonLabel->SetActorRotation(LookAtRotator);
+	}
+	
 }
 
-FVector UHexWorldRetrieveMapTool::HexToLocation(const UHexData* Hex, const int Size) const
+FVector UHexWorldRetrieveMapTool::HexToLocation(const FIntVector* Location, const int Size) const
 {
-	const double x = Size * (sqrt(3.0) * Hex->Location.X + sqrt(3.0)/2.0 * Hex->Location.Y);
-	const double y = Size * (3.0/2.0 * Hex->Location.Y);
+	const double x = Size * (sqrt(3.0) * Location->X + sqrt(3.0)/2.0 * Location->Y);
+	const double y = Size * (3.0/2.0 * Location->Y);
 	return FVector(x, y, 0);	
 }
 

@@ -3,9 +3,14 @@
 
 #include "HexagonWorld.h"
 
+#include "EditorScriptingHelpers.h"
 #include "HexWorldDataAsset.h"
 #include "UHexWorldSubsysten.h"
 #include "Actors/Hexagon.h"
+#include "Components/TextRenderComponent.h"
+#include "Engine/TextRenderActor.h"
+#include "Kismet/GameplayStatics.h"
+#include "Subsystems/UnrealEditorSubsystem.h"
 
 
 // Sets default values
@@ -103,6 +108,12 @@ void AHexagonWorld::Tick(float DeltaTime)
 
 			ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), Location, FRotator{}, SpawnParameters);
 			NavigationGate->SetOwner(HexActor);
+
+			// Spawn hexagon label
+			ATextRenderActor* Text = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), Location, FRotator(0.f, 0.f, 0.f));
+			Text->GetTextRender()->SetText(FText::FromString(LocationStr));
+			Text->GetTextRender()->SetTextRenderColor(FColor::Red);
+			Text->SetActorScale3D(FVector(5.f, 5.f, 5.f));
 			
 		}
 	}
