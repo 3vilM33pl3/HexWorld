@@ -63,6 +63,28 @@ void UHexWorldRetrieveMapProperties::TestConnection()
 	// }
 }
 
+void UHexWorldRetrieveMapProperties::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	if(PropertyChangedEvent.Property != nullptr)
+	{
+		if(PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(UHexWorldRetrieveMapProperties, bShowLabels))
+		{
+			TArray<AActor*> FoundActors;
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATextRenderActor::StaticClass(), FoundActors);
+
+			for(AActor* Actor: FoundActors)
+			{
+				ATextRenderActor* TextLabel = Cast<ATextRenderActor>(Actor);
+				if(TextLabel->ActorHasTag(FName("HexagonLabel")))
+				{
+					TextLabel->GetTextRender()->SetVisibility(bShowLabels);
+				}
+			}
+		}
+	}
+}
+
 UHexWorldRetrieveMapTool::UHexWorldRetrieveMapTool()
 {
 }
@@ -94,6 +116,7 @@ void UHexWorldRetrieveMapTool::AddLabel(const FIntVector* Location) const
 	Text->GetTextRender()->SetText(FText::FromString(LocationStr));
 	Text->GetTextRender()->SetTextRenderColor(FColor::White);
 	Text->SetActorScale3D(FVector(5.f, 5.f, 5.f));
+	Text->Tags.Add(FName("HexagonLabel"));
 	
 }
 

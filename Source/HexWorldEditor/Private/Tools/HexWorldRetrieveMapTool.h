@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Options, meta = (DisplayName = "Clear existing map before retrieving"))
 	bool bClearMap;
 
+	UPROPERTY(EditAnywhere, Category = Options, meta = (DisplayName = "Show labels"))
+	bool bShowLabels = true;
+	
 	UFUNCTION(CallInEditor, Category = Options)
 	void RetrieveMap();
 	
@@ -44,7 +47,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Secure connection over SSL"))
 	bool bSecure = false;
-
+	
 	UFUNCTION(CallInEditor, Category= Connection)
 	void TestConnection();
 	
@@ -53,8 +56,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Hexagon map"))
 	UHexagonMap* HexagonMap;
 
-	
-
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 };
 
 UCLASS()
