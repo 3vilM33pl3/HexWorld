@@ -14,6 +14,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Navigation/NavigationGate.h"
 #include "Subsystems/UnrealEditorSubsystem.h"
+#include "Utils/Pairing.h"
 
 #define LOCTEXT_NAMESPACE "HexWorldRetrieveMapTool"
 
@@ -41,6 +42,17 @@ void UHexWorldRetrieveMapProperties::RetrieveMap()
 	
 	HexagonMap->RetrieveMap(bClearMap);
 
+}
+
+void UHexWorldRetrieveMapProperties::ClearMap()
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Hexagon"), FoundActors);
+
+	for(AActor* Hex: FoundActors)
+	{
+		Hex->Destroy();
+	}
 }
 
 void UHexWorldRetrieveMapProperties::TestConnection()
@@ -112,11 +124,12 @@ void UHexWorldRetrieveMapTool::AddLabel(const FIntVector* Location) const
 	const FVector TextLocation = FVector(WorldLocation.X, WorldLocation.Y, WorldLocation.Z + 1000);
 	ATextRenderActor* Text = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), TextLocation, FRotator(0.f, 90.f, 0.f));
 
-	const FString LocationStr = FString::Printf(TEXT("X:%d Y:%d Z:%d"), Location->X, Location->Y, Location->Z);
+	const FString LocationStr = FString::Printf(TEXT("(%d) - [%d,%d,%d]"), UPairing::Pair(Location->X, Location->Y),Location->X, Location->Y, Location->Z);
 	Text->GetTextRender()->SetText(FText::FromString(LocationStr));
 	Text->GetTextRender()->SetTextRenderColor(FColor::White);
 	Text->SetActorScale3D(FVector(5.f, 5.f, 5.f));
 	Text->Tags.Add(FName("HexagonLabel"));
+	Text->Tags.Add(FName("Hexagon"));
 	
 }
 
@@ -195,6 +208,7 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 
 			ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), WorldLocation, FRotator{}, SpawnParameters);
 			NavigationGate->SetOwner(HexActor);
+			NavigationGate->Tags.Add("Hexagon");
 
 			AddLabel(&HexData->Location);
 			

@@ -41,6 +41,9 @@ public:
 	
 	UFUNCTION(CallInEditor, Category = Options)
 	void RetrieveMap();
+
+	UFUNCTION(CallInEditor, Category = Options)
+	void ClearMap();
 	
 	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Backend server address"))
 	FString Address = "localhost:8080";
