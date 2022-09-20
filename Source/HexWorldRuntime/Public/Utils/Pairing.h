@@ -1,12 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/Object.h"
 #include "Pairing.generated.h"
 
-/**
- * 
- */
 UCLASS(BlueprintType)
 class HEXWORLDRUNTIME_API UPairing final: public UBlueprintFunctionLibrary
 {
