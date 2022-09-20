@@ -24,6 +24,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Global Data"))
 	TMap<FString, FString> GlobalData;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Local Data"))
-	TMap<FString, FString> LocalData;
+	// TODO: Multimap can not be used in blueprints, so we need to find a way to make this work
+	// UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = HexWorld, meta = (DisplayName = "Local Data"))
+	TMultiMap<FString, FString> LocalData;
 };

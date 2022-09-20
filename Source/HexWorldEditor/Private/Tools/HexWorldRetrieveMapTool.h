@@ -56,7 +56,7 @@ public:
 	
 	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(24);
 
-	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Hexagon map"))
+	// UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Hexagon map"))
 	UHexagonMap* HexagonMap;
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;

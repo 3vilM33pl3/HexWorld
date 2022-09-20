@@ -9,8 +9,9 @@ struct FLocalHexagon
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Meta Data"))
-	TMap<FString, FString> Data;	
+	// TODO: MultiMap can not be used in blueprint, so we need to find a way to make this work
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = HexWorld, meta = (DisplayName = "Meta Data"))
+	TMultiMap<FString, FString> Data;	
 };
 
 UCLASS(BlueprintType)
