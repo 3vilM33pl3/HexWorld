@@ -8,7 +8,7 @@ uint64 UPairing::SzudzikPairing(const uint64 X, const uint64 Y)
 
 void UPairing::SzudzikUnPairing(const uint64 S, int64& X, int64& Y)
 {
-	const int64 b = (int64)floor(sqrt(S));
+	const int64 b = static_cast<int64>(floor(sqrt(S)));
 	const int64 a = S - b * b;
 
 	if(a > b)
@@ -24,16 +24,16 @@ void UPairing::SzudzikUnPairing(const uint64 S, int64& X, int64& Y)
 	
 }
 
-int64 UPairing::Pair(int64 X, int64 Y)
+int64 UPairing::Pair(const int64 X, const int64 Y)
 {
-	uint64 x = SignedTransform(X);
-	uint64 y = SignedTransform(Y);
+	const uint64 x = SignedTransform(X);
+	const uint64 y = SignedTransform(Y);
 
 	return SzudzikPairing(x, y);
 	
 }
 
-void UPairing::UnPair(int64 S, int64& X, int64& Y)
+void UPairing::UnPair(const int64 S, int64& X, int64& Y)
 {
 	int64 x, y;
 	SzudzikUnPairing(S, x, y);
@@ -42,12 +42,12 @@ void UPairing::UnPair(int64 S, int64& X, int64& Y)
 	Y = SignedTransform(y);
 }
 
-uint64 UPairing::SignedTransform(int64 X)
+uint64 UPairing::SignedTransform(const int64 X)
 {
-	return (X < 0) ? (uint64)(-X) * 2 - 1 : (uint64)X * 2;	
+	return (X < 0) ? static_cast<uint64>(-X) * 2 - 1 : static_cast<uint64>(X) * 2;	
 }
 
-int64 UPairing::UnsignedTransform(uint64 X)
+int64 UPairing::UnsignedTransform(const uint64 X)
 {
-	return (X & 1) ? -(int64)(X / 2) - 1 : (int64)(X / 2);
+	return (X & 1) ? -static_cast<int64>(X / 2) - 1 : static_cast<int64>(X / 2);
 }
