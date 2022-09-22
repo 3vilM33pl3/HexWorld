@@ -211,9 +211,11 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			if(HexData->LocalData.Contains("link"))
 			{
 				FActorSpawnParameters GateSpawnParameters;
-				GateSpawnParameters.Name = FName("Gate_" + UPairing::Pair(HexData->Location.X, HexData->Location.Y));
-				int64 X;
-				int64 Y;
+				GateSpawnParameters.NameMode = FActorSpawnParameters::ESpawnActorNameMode::Requested;
+				FString Gatename = FString::Printf(TEXT("Gate_%d"), UPairing::Pair(HexData->Location.X, HexData->Location.Y));
+				GateSpawnParameters.Name = FName(*Gatename);
+								
+				int64 X, Y;
 				FString LocSingleValue = *HexData->LocalData.Find("link");
 				UPairing::UnPair(FCString::Atoi64(*LocSingleValue), X, Y);
 				FIntVector* LinkLocation = new FIntVector(X, Y, 0);
@@ -222,6 +224,11 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 				ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), (WorldLocation + LookAt) / 2, GateRot, GateSpawnParameters);
 				DrawDebugLine(GetWorld(), FVector{WorldLocation.X, WorldLocation.Y, 500}, FVector{LookAt.X, LookAt.Y, 500}, FColor::Emerald, true, -1, 0, 10);
 				
+				NavigationGate->NextGateNameTag = FString::Printf(TEXT("Gate_%d"), FCString::Atoi64(*LocSingleValue));
+				
+				
+				NavigationGate->Tags.Add(FName(*Gatename));
+
 				NavigationGate->SetOwner(HexActor);
 				NavigationGate->Tags.Add("Hexagon");
 				NavigationGate->Tags.Add("HexagonGate");

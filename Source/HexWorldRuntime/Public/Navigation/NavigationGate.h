@@ -55,6 +55,9 @@ public:
 	ANavigationGate* NextGate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
+	FString NextGateNameTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
 	UStaticMesh* Gate;
 
 	UStaticMeshComponent* GateVisual;
