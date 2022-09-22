@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
 	ANavigationGate* NextGate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
+	FString FirstGateNameTag;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Magic Bezier")
 	FVector P0;
 
@@ -63,5 +66,7 @@ public:
 
 private:
 	void CalculateControlPointsCubicBezier();
+
+	void StartNavigation();
 	
 };

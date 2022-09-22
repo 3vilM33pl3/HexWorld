@@ -51,6 +51,17 @@ void ANavigationGate::BeginPlay()
 void ANavigationGate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(NextGate != nullptr || NextGate == this)
+	{
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName(*NextGateNameTag), FoundActors);
+
+		if(FoundActors.Num() > 0)
+		{
+			NextGate = Cast<ANavigationGate>(FoundActors[0]);
+		}
+	}
 }
 
 void ANavigationGate::OnConstruction(const FTransform& Transform)

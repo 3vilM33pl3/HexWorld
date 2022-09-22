@@ -1,5 +1,6 @@
 ﻿#include "Navigation/HexWorldPawn.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Navigation/BezierCurveFunctions.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -15,12 +16,13 @@ AHexWorldPawn::AHexWorldPawn()
 	CarrierVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualRepresentation"));
 	CarrierVisual->SetupAttachment(RootComponent);
 	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> CarrierVisualAsset(TEXT("/HexWorld/Narrowboat/SM_Narrowboat.SM_Narrowboat"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> CarrierVisualAsset(TEXT("/HexWorld/Narrowboat/SM_Narrowboat_v4_0.SM_Narrowboat_v4_0"));
 	if (CarrierVisualAsset.Succeeded())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Carrier static mesh loaded"));
 		Carrier = CarrierVisualAsset.Object;
 		CarrierVisual->SetStaticMesh(Carrier);
+		CarrierVisual->SetRelativeRotation(FRotator{0,90,0});
 		CarrierVisual->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 	}
 	else
@@ -35,16 +37,10 @@ AHexWorldPawn::AHexWorldPawn()
 void AHexWorldPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	CalculateControlPointsCubicBezier();
-	ForwardBezierStrength = InitialBezierStrength;
-	if(NextGate != nullptr)
-	{
-		BackwardBezierStrength = NextGate->BackwardBezierStrength;
-	}
-	
-	Length = BezierCurveFunctions::CubicBezierLengthEstimate(P0, P1, P2, P3, SegmentInterval);
-	this->SetActorLocation(this->GetActorLocation());
-	this->SetActorEnableCollision(true);
+
+	StartNavigation();
+
+
 		
 }
 
@@ -52,6 +48,11 @@ void AHexWorldPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(NextGate == nullptr)
+	{
+		StartNavigation();
+		return;
+	}
 	
 	if (ProgressAlongCurve < 1.0f)
 	{
@@ -102,5 +103,26 @@ void AHexWorldPawn::CalculateControlPointsCubicBezier()
 		P2 = NextGate->GetTransform().TransformPosition(P2);
 
 	}	
+}
+
+void AHexWorldPawn::StartNavigation()
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName(*FirstGateNameTag), FoundActors);
+
+	if(FoundActors.Num() > 0)
+	{
+		NextGate = Cast<ANavigationGate>(FoundActors[0]);
+		CalculateControlPointsCubicBezier();
+		ForwardBezierStrength = InitialBezierStrength;
+		if(NextGate != nullptr)
+		{
+			BackwardBezierStrength = NextGate->BackwardBezierStrength;
+		}
+	
+		Length = BezierCurveFunctions::CubicBezierLengthEstimate(P0, P1, P2, P3, SegmentInterval);
+		this->SetActorLocation(this->GetActorLocation());
+		this->SetActorEnableCollision(true);
+	}
 }
 

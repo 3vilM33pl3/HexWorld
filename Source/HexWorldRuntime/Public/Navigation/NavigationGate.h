@@ -43,10 +43,10 @@ public:
 	float Length = 0;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
-	float ForwardBezierStrength = 4000;
+	float ForwardBezierStrength = 500;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
-	float BackwardBezierStrength = 4000;
+	float BackwardBezierStrength = 500;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
 	float DebugPointsDistance = 5;
