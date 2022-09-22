@@ -210,6 +210,8 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 			
 			if(HexData->LocalData.Contains("link"))
 			{
+				FActorSpawnParameters GateSpawnParameters;
+				GateSpawnParameters.Name = FName("Gate_" + UPairing::Pair(HexData->Location.X, HexData->Location.Y));
 				int64 X;
 				int64 Y;
 				FString LocSingleValue = *HexData->LocalData.Find("link");
@@ -217,9 +219,8 @@ void UHexWorldRetrieveMapTool::OnTick(float DeltaTime)
 				FIntVector* LinkLocation = new FIntVector(X, Y, 0);
 				FVector LookAt = HexToLocation(LinkLocation, 1500);
 				FRotator GateRot = UKismetMathLibrary::FindLookAtRotation(WorldLocation, LookAt);
-				ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), (WorldLocation + LookAt) / 2, GateRot, SpawnParameters);
+				ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), (WorldLocation + LookAt) / 2, GateRot, GateSpawnParameters);
 				DrawDebugLine(GetWorld(), FVector{WorldLocation.X, WorldLocation.Y, 500}, FVector{LookAt.X, LookAt.Y, 500}, FColor::Emerald, true, -1, 0, 10);
-
 				
 				NavigationGate->SetOwner(HexActor);
 				NavigationGate->Tags.Add("Hexagon");
