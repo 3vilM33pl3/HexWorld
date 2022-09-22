@@ -23,7 +23,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	FVector HexToLocation(const UHexData* Hex, int Size) const;
+	FVector HexToLocation(const FIntVector* Location, int Size) const;
 	UUHexWorldSubsysten* HexWorldSubsysten;
 	UHexagonMap* HexagonMap;
 };

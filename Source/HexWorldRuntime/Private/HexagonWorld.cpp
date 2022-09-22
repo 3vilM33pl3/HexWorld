@@ -10,7 +10,9 @@
 #include "Components/TextRenderComponent.h"
 #include "Engine/TextRenderActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Subsystems/UnrealEditorSubsystem.h"
+#include "Utils/Pairing.h"
 
 
 // Sets default values
@@ -47,7 +49,7 @@ void AHexagonWorld::Tick(float DeltaTime)
 				Direction = AHexagon::ConvertDirection(HexData->LocalData.Find("direction"));
 			} 
 			
-			const FVector Location = HexToLocation(HexData, 1500);
+			const FVector Location = HexToLocation(&HexData->Location, 1500);
 			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
 
 			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), HexData->Location.X, HexData->Location.Y, HexData->Location.Z, *Type);
@@ -106,23 +108,39 @@ void AHexagonWorld::Tick(float DeltaTime)
 			HexActor->Tags.Add(ToCStr(DirectionStr));
 			HexActor->Tags.Add(ToCStr(LocationStr));
 
-			ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), Location, FRotator{}, SpawnParameters);
-			NavigationGate->SetOwner(HexActor);
+			if(HexData->LocalData.Contains("link"))
+			{
+				FActorSpawnParameters GateSpawnParameters;
+				GateSpawnParameters.NameMode = FActorSpawnParameters::ESpawnActorNameMode::Requested;
+				FString Gatename = FString::Printf(TEXT("Gate_%d"), UPairing::Pair(HexData->Location.X, HexData->Location.Y));
+				GateSpawnParameters.Name = FName(*Gatename);
+								
+				int64 X, Y;
+				FString LocSingleValue = *HexData->LocalData.Find("link");
+				UPairing::UnPair(FCString::Atoi64(*LocSingleValue), X, Y);
+				FIntVector* LinkLocation = new FIntVector(X, Y, 0);
+				FVector LookAt = HexToLocation(LinkLocation, 1500);
+				FRotator GateRot = UKismetMathLibrary::FindLookAtRotation(Location, LookAt);
+				ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), (Location + LookAt) / 2, GateRot, GateSpawnParameters);
+				DrawDebugLine(GetWorld(), FVector{Location.X, Location.Y, 500}, FVector{LookAt.X, LookAt.Y, 500}, FColor::Emerald, true, -1, 0, 10);
+				
+				NavigationGate->NextGateNameTag = FString::Printf(TEXT("Gate_%d"), FCString::Atoi64(*LocSingleValue));
+				
+				
+				NavigationGate->Tags.Add(FName(*Gatename));
 
-			// Spawn hexagon label
-			ATextRenderActor* Text = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), Location, FRotator(0.f, 0.f, 0.f));
-			Text->GetTextRender()->SetText(FText::FromString(LocationStr));
-			Text->GetTextRender()->SetTextRenderColor(FColor::Red);
-			Text->SetActorScale3D(FVector(5.f, 5.f, 5.f));
-			
+				NavigationGate->SetOwner(HexActor);
+				NavigationGate->Tags.Add("Hexagon");
+				NavigationGate->Tags.Add("HexagonGate");
+			}
 		}
 	}
 }
 
-FVector AHexagonWorld::HexToLocation(const UHexData* Hex, const int Size) const
+FVector AHexagonWorld::HexToLocation(const FIntVector* Location, const int Size) const
 {
-	const double x = Size * (sqrt(3.0) * Hex->Location.X + sqrt(3.0)/2.0 * Hex->Location.Y);
-	const double y = Size * (3.0/2.0 * Hex->Location.Y);
+	const double x = Size * (sqrt(3.0) * Location->X + sqrt(3.0)/2.0 * Location->Y);
+	const double y = Size * (3.0/2.0 * Location->Y);
 	return FVector(x, y, 0);	
 }
 
