@@ -41,7 +41,7 @@ public class HexWorldEditor : ModuleRules
 				"InteractiveToolsFramework",
 				"EditorInteractiveToolsFramework", 
 				"HexWorldLibrary",
-				"HexWorldRuntime"
+				"HexWorldRuntime", "Water"
 			}
 		);
 		

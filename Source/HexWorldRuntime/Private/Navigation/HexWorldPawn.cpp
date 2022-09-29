@@ -80,7 +80,7 @@ void AHexWorldPawn::Tick(float DeltaTime)
 
 void AHexWorldPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::SetupPlayerInputComponent(PlayerInputComponent);  
 }
 
 void AHexWorldPawn::CalculateControlPointsCubicBezier()

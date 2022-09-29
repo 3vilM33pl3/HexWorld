@@ -44,6 +44,11 @@ public:
 
 	UFUNCTION(CallInEditor, Category = Options)
 	void ClearMap();
+
+
+	UFUNCTION(CallInEditor, Category = TestTools)
+	void AddRiver();
+
 	
 	UPROPERTY(EditAnywhere, Category = Connection, meta = (DisplayName = "Backend server address"))
 	FString Address = "localhost:8080";
@@ -60,6 +65,9 @@ public:
 	UHexagonMap* HexagonMap;
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+protected:
+	TSoftObjectPtr<UMaterialInterface> WaterMaterial;
 };
 
 UCLASS()

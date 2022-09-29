@@ -3,6 +3,10 @@
 #include "HexWorldDataAsset.h"
 #include "InteractiveToolManager.h"
 #include "UHexWorldSubsysten.h"
+#include "WaterBodyLakeActor.h"
+#include "WaterBodyRiverActor.h"
+#include "WaterBodyRiverComponent.h"
+#include "WaterSplineComponent.h"
 #include "Actors/Hexagon.h"
 #include "Actors/HexData.h"
 #include "Comms/HexWorldRunnable.h"
@@ -53,6 +57,44 @@ void UHexWorldRetrieveMapProperties::ClearMap()
 	{
 		Hex->Destroy();
 	}
+}
+
+void UHexWorldRetrieveMapProperties::AddRiver()
+{
+
+	AWaterBodyRiver* RiverActor = GetWorld()->SpawnActor<AWaterBodyRiver>(AWaterBodyRiver::StaticClass());
+
+	UWaterBodyRiverComponent* RiverComponents = Cast<UWaterBodyRiverComponent>(RiverActor->GetWaterBodyComponent());
+	RiverComponents->CurveSettings.bUseCurveChannel = true;
+	UCurveFloat* Curve = NewObject<UCurveFloat>();
+
+	FKeyHandle NewKeyHandle = Curve->FloatCurve.AddKey(0, 0);
+
+	Curve->FloatCurve.SetKeyInterpMode(NewKeyHandle, RCIM_Cubic);
+	Curve->FloatCurve.SetKeyTangentMode(NewKeyHandle, RCTM_Auto);
+	Curve->FloatCurve.SetKeyTangentWeightMode(NewKeyHandle, RCTWM_WeightedNone);
+
+	Curve->FloatCurve.AddKey(1, 1);
+	
+	
+	RiverComponents->CurveSettings.ElevationCurveAsset = Curve; 
+	RiverComponents->CurveSettings.ChannelEdgeOffset = 0.0f;
+	RiverComponents->CurveSettings.ChannelDepth = 256.0f;
+	RiverComponents->CurveSettings.CurveRampWidth= 512.0f;
+	
+	FWaterBodyHeightmapSettings HeightmapSettings;
+	HeightmapSettings.FalloffSettings.FalloffAngle = 45.0f;
+	HeightmapSettings.FalloffSettings.FalloffWidth = 512.0f;
+	HeightmapSettings.FalloffSettings.EdgeOffset = 128.0f;
+	HeightmapSettings.FalloffSettings.ZOffset = 8.0f;
+
+	RiverComponents->WaterHeightmapSettings = HeightmapSettings;
+
+	WaterMaterial = FSoftObjectPath(TEXT("/Water/Materials/WaterSurface/Water_Material_River.Water_Material_River"));
+	RiverComponents->SetWaterMaterial(WaterMaterial.LoadSynchronous());
+	
+	UWaterSplineMetadata* Data = RiverActor->GetWaterSplineMetadata();
+	UWaterSplineComponent* Component = RiverActor->GetWaterSpline();
 }
 
 void UHexWorldRetrieveMapProperties::TestConnection()
