@@ -20,6 +20,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Options)
 	void RetrieveMap(bool bClearMap);
 
+	UFUNCTION(BlueprintCallable, Category = Options)
+	void PopulateMap();
+
+	void AddLabel(const FIntVector* Location) const;
+
 	UPROPERTY(EditAnywhere, Category = Options, meta = (DisplayName = "Use this location as center of the map"))
 	FIntVector CenterLocation = FIntVector{0,0,0};
 
@@ -34,7 +39,7 @@ public:
 
 	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(120);
 
-	FVector HexToLocation(const UHexData* Hex, const int Size) const;
+	FVector HexToLocation(const FIntVector* Location, const int Size) const;
 
 private:
 	HexagonClient* HexagonClient;

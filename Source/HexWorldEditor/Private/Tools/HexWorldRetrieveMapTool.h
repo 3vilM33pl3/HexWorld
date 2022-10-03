@@ -80,7 +80,6 @@ public:
 
 	virtual void Setup() override;
 	virtual void SetWorld(UWorld* World);
-	void AddLabel(const FIntVector* Location) const;
 
 
 protected:
