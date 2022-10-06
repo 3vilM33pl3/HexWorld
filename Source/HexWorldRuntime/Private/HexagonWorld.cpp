@@ -1,18 +1,7 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿#include "HexagonWorld.h"
 
-
-#include "HexagonWorld.h"
-
-#include "EditorScriptingHelpers.h"
-#include "HexWorldDataAsset.h"
 #include "UHexWorldSubsysten.h"
-#include "Actors/Hexagon.h"
-#include "Components/TextRenderComponent.h"
-#include "Engine/TextRenderActor.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Subsystems/UnrealEditorSubsystem.h"
-#include "Utils/Pairing.h"
 
 
 // Sets default values

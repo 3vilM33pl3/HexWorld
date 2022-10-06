@@ -65,7 +65,7 @@ void UHexagonMap::RetrieveMap(bool bClearMap)
 
 void UHexagonMap::PopulateMap()
 {
-		if(!HexCoordData->IsEmpty())
+	if(!HexCoordData->IsEmpty())
 	{
 		UHexData* HexData;
 		if(HexCoordData->Dequeue(HexData))

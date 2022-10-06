@@ -1,24 +1,16 @@
 #include "HexWorldRetrieveMapTool.h"
 
-#include "HexWorldDataAsset.h"
 #include "InteractiveToolManager.h"
 #include "UHexWorldSubsysten.h"
-#include "WaterBodyLakeActor.h"
 #include "WaterBodyRiverActor.h"
 #include "WaterBodyRiverComponent.h"
 #include "WaterSplineComponent.h"
-#include "Actors/Hexagon.h"
-#include "Actors/HexData.h"
-#include "Comms/HexWorldRunnable.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/TextRenderActor.h"
 #include "Engine/World.h"
-#include "hexworld/hex_client.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Navigation/NavigationGate.h"
 #include "Subsystems/UnrealEditorSubsystem.h"
-#include "Utils/Pairing.h"
 
 #define LOCTEXT_NAMESPACE "HexWorldRetrieveMapTool"
 
@@ -61,10 +53,35 @@ void UHexWorldRetrieveMapProperties::ClearMap()
 
 void UHexWorldRetrieveMapProperties::AddRiver()
 {
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Gate_6"), FoundActors);
 
+	ANavigationGate *Gate = Cast<ANavigationGate>(FoundActors[0]);
+	if(!Gate)
+	{
+		return;
+	}
+
+	const FVector GateLocation = Gate->GetActorLocation();
+	FVector GateForward = Gate->GetActorForwardVector();
+	// FVector GateBackward = Gate->GetActorForwardVector() * -100.f;
+
+	FVector ArriveTangent = GateForward;
+	// FVector LeaveTangent = GateLocation + ;
+	
 	AWaterBodyRiver* RiverActor = GetWorld()->SpawnActor<AWaterBodyRiver>(AWaterBodyRiver::StaticClass());
 
 	UWaterBodyRiverComponent* RiverComponents = Cast<UWaterBodyRiverComponent>(RiverActor->GetWaterBodyComponent());
+	UWaterSplineComponent* WaterSplineComponent = RiverComponents->GetWaterSpline();
+	USplineMetadata* SplineMetadata = WaterSplineComponent->GetSplinePointsMetadata();
+	// WaterSplineComponent->SetSplinePointType(0, ESplinePointType::CurveCustomTangent);
+	WaterSplineComponent->SplineCurves.Position.Points[0].OutVal = GateLocation;
+	WaterSplineComponent->SplineCurves.Position.Points[0].ArriveTangent = ArriveTangent;
+	WaterSplineComponent->SplineCurves.Position.Points[0].LeaveTangent = ArriveTangent;
+
+	
+	// WaterSplineComponent->SplineCurves.Position.Points[0].
+
 	RiverComponents->CurveSettings.bUseCurveChannel = true;
 	UCurveFloat* Curve = NewObject<UCurveFloat>();
 
@@ -95,6 +112,8 @@ void UHexWorldRetrieveMapProperties::AddRiver()
 	
 	UWaterSplineMetadata* Data = RiverActor->GetWaterSplineMetadata();
 	UWaterSplineComponent* Component = RiverActor->GetWaterSpline();
+
+
 }
 
 void UHexWorldRetrieveMapProperties::TestConnection()

@@ -4,7 +4,6 @@
 #include "CoreMinimal.h"
 #include "Actors/HexData.h"
 #include "Containers/CircularQueue.h"
-#include "GameFramework/Actor.h"
 #include "hexworld/hex_lib.h"
 #include "HexagonMap.generated.h"
 
