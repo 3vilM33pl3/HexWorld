@@ -66,8 +66,7 @@ public:
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
-protected:
-	TSoftObjectPtr<UMaterialInterface> WaterMaterial;
+
 };
 
 UCLASS()

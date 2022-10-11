@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WaterBodyRiverActor.h"
 #include "Actors/HexData.h"
 #include "Containers/CircularQueue.h"
 #include "hexworld/hex_lib.h"
@@ -24,6 +25,9 @@ public:
 
 	void AddLabel(const FIntVector* Location) const;
 
+	UFUNCTION(BlueprintCallable, Category = Options)
+	void AddRiver(FString Name, int PointPosition);
+
 	UPROPERTY(EditAnywhere, Category = Options, meta = (DisplayName = "Use this location as center of the map"))
 	FIntVector CenterLocation = FIntVector{0,0,0};
 
@@ -40,7 +44,10 @@ public:
 
 	FVector HexToLocation(const FIntVector* Location, const int Size) const;
 
+protected:
+	TSoftObjectPtr<UMaterialInterface> WaterMaterial;
+	
 private:
 	HexagonClient* HexagonClient;
-	
+	AWaterBodyRiver* RiverActor;
 };

@@ -4,6 +4,9 @@
 #include "HexagonMap.h"
 
 #include "HexWorldDataAsset.h"
+#include "WaterBodyRiverActor.h"
+#include "WaterBodyRiverComponent.h"
+#include "WaterSplineComponent.h"
 #include "Actors/Hexagon.h"
 #include "Comms/HexWorldRunnable.h"
 #include "Components/TextRenderComponent.h"
@@ -65,9 +68,11 @@ void UHexagonMap::RetrieveMap(bool bClearMap)
 
 void UHexagonMap::PopulateMap()
 {
-	if(!HexCoordData->IsEmpty())
+	
+	if(HexCoordData && !HexCoordData->IsEmpty())
 	{
 		UHexData* HexData;
+		
 		if(HexCoordData->Dequeue(HexData))
 		{
 			const FString Type(HexData->Type);
@@ -184,6 +189,87 @@ void UHexagonMap::AddLabel(const FIntVector* Location) const
 	Text->SetActorScale3D(FVector(5.f, 5.f, 5.f));
 	Text->Tags.Add(FName("HexagonLabel"));
 	Text->Tags.Add(FName("Hexagon"));
+}
+
+void UHexagonMap::AddRiver(FString Name, const int PointPosition)
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName(Name), FoundActors);
+
+	if (FoundActors.IsEmpty())
+	{
+		return;
+	}
+	
+	ANavigationGate *Gate = Cast<ANavigationGate>(FoundActors[0]);
+	if(!Gate)
+	{
+		return;
+	}
+
+	const FVector GateLocation = Gate->GetActorLocation();
+	const FRotator GateRotation = Gate->GetActorRotation();
+	FVector GateForward = Gate->GetActorForwardVector();
+	// FVector GateBackward = Gate->GetActorForwardVector() * -100.f;
+
+	FVector ArriveTangent = GateForward;
+	// FVector LeaveTangent = GateLocation + ;
+
+	if(!RiverActor)
+	{
+		RiverActor = GetWorld()->SpawnActor<AWaterBodyRiver>(AWaterBodyRiver::StaticClass());	
+	}
+	
+	UWaterBodyRiverComponent* RiverComponents = Cast<UWaterBodyRiverComponent>(RiverActor->GetWaterBodyComponent());
+	UWaterSplineComponent* WaterSplineComponent = RiverComponents->GetWaterSpline();
+	USplineMetadata* SplineMetadata = WaterSplineComponent->GetSplinePointsMetadata();
+
+	if(WaterSplineComponent->SplineCurves.Position.Points.Num() < PointPosition + 1)
+	{
+		WaterSplineComponent->SplineCurves.Position.Points.Add(FInterpCurvePoint<FVector>{static_cast<float>(PointPosition), GateLocation, ArriveTangent, ArriveTangent, CIM_CurveAuto});
+		WaterSplineComponent->SplineCurves.Rotation.Points.Add(FInterpCurvePoint<UE::Math::TQuat<double>>{static_cast<float>(PointPosition),UE::Math::TQuat<double>{0,0,0,1}, UE::Math::TQuat<double>{0,0,0,1}, UE::Math::TQuat<double>{0,0,0,1}, CIM_CurveAuto});
+		WaterSplineComponent->SplineCurves.Scale.Points.Add(FInterpCurvePoint<FVector>{static_cast<float>(PointPosition), FVector{2048.f, 150.f, 1.f}, FVector{0.f, 0.f, 0.f}, FVector{0.f, 0.f, 0.f}, CIM_CurveAuto});
+	}
+
+	// WaterSplineComponent->SetSplinePointType(0, ESplinePointType::CurveCustomTangent);
+	WaterSplineComponent->SplineCurves.Position.Points[PointPosition].OutVal = GateLocation;
+	WaterSplineComponent->SplineCurves.Position.Points[PointPosition].ArriveTangent = ArriveTangent;
+	WaterSplineComponent->SplineCurves.Position.Points[PointPosition].LeaveTangent = ArriveTangent;
+	
+	// WaterSplineComponent->SplineCurves.Position.Points[0].
+	RiverComponents->CurveSettings.bUseCurveChannel = true;
+	UCurveFloat* Curve = NewObject<UCurveFloat>();
+
+	FKeyHandle NewKeyHandle = Curve->FloatCurve.AddKey(0, 0);
+
+	Curve->FloatCurve.SetKeyInterpMode(NewKeyHandle, RCIM_Cubic);
+	Curve->FloatCurve.SetKeyTangentMode(NewKeyHandle, RCTM_Auto);
+	Curve->FloatCurve.SetKeyTangentWeightMode(NewKeyHandle, RCTWM_WeightedNone);
+
+	Curve->FloatCurve.AddKey(1, 1);
+	
+	
+	RiverComponents->CurveSettings.ElevationCurveAsset = Curve; 
+	RiverComponents->CurveSettings.ChannelEdgeOffset = 0.0f;
+	RiverComponents->CurveSettings.ChannelDepth = 256.0f;
+	RiverComponents->CurveSettings.CurveRampWidth= 512.0f;
+	
+	FWaterBodyHeightmapSettings HeightmapSettings;
+	HeightmapSettings.FalloffSettings.FalloffAngle = 45.0f;
+	HeightmapSettings.FalloffSettings.FalloffWidth = 512.0f;
+	HeightmapSettings.FalloffSettings.EdgeOffset = 128.0f;
+	HeightmapSettings.FalloffSettings.ZOffset = 8.0f;
+
+	RiverComponents->WaterHeightmapSettings = HeightmapSettings;
+
+	WaterMaterial = FSoftObjectPath(TEXT("/Water/Materials/WaterSurface/Water_Material_River.Water_Material_River"));
+	RiverComponents->SetWaterMaterial(WaterMaterial.LoadSynchronous());
+	
+	UWaterSplineMetadata* Data = RiverActor->GetWaterSplineMetadata();
+	UWaterSplineComponent* Component = RiverActor->GetWaterSpline();
+
+	RiverComponents->UpdateAll(true);
+
 }
 
 FVector UHexagonMap::HexToLocation(const FIntVector* Location, const int Size) const

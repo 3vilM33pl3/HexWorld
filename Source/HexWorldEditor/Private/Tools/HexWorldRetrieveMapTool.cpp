@@ -53,67 +53,13 @@ void UHexWorldRetrieveMapProperties::ClearMap()
 
 void UHexWorldRetrieveMapProperties::AddRiver()
 {
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Gate_6"), FoundActors);
-
-	ANavigationGate *Gate = Cast<ANavigationGate>(FoundActors[0]);
-	if(!Gate)
-	{
-		return;
-	}
-
-	const FVector GateLocation = Gate->GetActorLocation();
-	FVector GateForward = Gate->GetActorForwardVector();
-	// FVector GateBackward = Gate->GetActorForwardVector() * -100.f;
-
-	FVector ArriveTangent = GateForward;
-	// FVector LeaveTangent = GateLocation + ;
-	
-	AWaterBodyRiver* RiverActor = GetWorld()->SpawnActor<AWaterBodyRiver>(AWaterBodyRiver::StaticClass());
-
-	UWaterBodyRiverComponent* RiverComponents = Cast<UWaterBodyRiverComponent>(RiverActor->GetWaterBodyComponent());
-	UWaterSplineComponent* WaterSplineComponent = RiverComponents->GetWaterSpline();
-	USplineMetadata* SplineMetadata = WaterSplineComponent->GetSplinePointsMetadata();
-	// WaterSplineComponent->SetSplinePointType(0, ESplinePointType::CurveCustomTangent);
-	WaterSplineComponent->SplineCurves.Position.Points[0].OutVal = GateLocation;
-	WaterSplineComponent->SplineCurves.Position.Points[0].ArriveTangent = ArriveTangent;
-	WaterSplineComponent->SplineCurves.Position.Points[0].LeaveTangent = ArriveTangent;
-
-	
-	// WaterSplineComponent->SplineCurves.Position.Points[0].
-
-	RiverComponents->CurveSettings.bUseCurveChannel = true;
-	UCurveFloat* Curve = NewObject<UCurveFloat>();
-
-	FKeyHandle NewKeyHandle = Curve->FloatCurve.AddKey(0, 0);
-
-	Curve->FloatCurve.SetKeyInterpMode(NewKeyHandle, RCIM_Cubic);
-	Curve->FloatCurve.SetKeyTangentMode(NewKeyHandle, RCTM_Auto);
-	Curve->FloatCurve.SetKeyTangentWeightMode(NewKeyHandle, RCTWM_WeightedNone);
-
-	Curve->FloatCurve.AddKey(1, 1);
-	
-	
-	RiverComponents->CurveSettings.ElevationCurveAsset = Curve; 
-	RiverComponents->CurveSettings.ChannelEdgeOffset = 0.0f;
-	RiverComponents->CurveSettings.ChannelDepth = 256.0f;
-	RiverComponents->CurveSettings.CurveRampWidth= 512.0f;
-	
-	FWaterBodyHeightmapSettings HeightmapSettings;
-	HeightmapSettings.FalloffSettings.FalloffAngle = 45.0f;
-	HeightmapSettings.FalloffSettings.FalloffWidth = 512.0f;
-	HeightmapSettings.FalloffSettings.EdgeOffset = 128.0f;
-	HeightmapSettings.FalloffSettings.ZOffset = 8.0f;
-
-	RiverComponents->WaterHeightmapSettings = HeightmapSettings;
-
-	WaterMaterial = FSoftObjectPath(TEXT("/Water/Materials/WaterSurface/Water_Material_River.Water_Material_River"));
-	RiverComponents->SetWaterMaterial(WaterMaterial.LoadSynchronous());
-	
-	UWaterSplineMetadata* Data = RiverActor->GetWaterSplineMetadata();
-	UWaterSplineComponent* Component = RiverActor->GetWaterSpline();
-
-
+	HexagonMap->AddRiver("Gate_6",0);
+	HexagonMap->AddRiver("Gate_4",1);
+	HexagonMap->AddRiver("Gate_5",2);
+	HexagonMap->AddRiver("Gate_2",3);
+	HexagonMap->AddRiver("Gate_1",4);
+	HexagonMap->AddRiver("Gate_7",5);
+	HexagonMap->AddRiver("Gate_6",6);
 }
 
 void UHexWorldRetrieveMapProperties::TestConnection()
