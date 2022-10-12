@@ -4,9 +4,13 @@
 #include "Editor.h"
 #endif
 
+#include "HexagonMap.h"
+#include "Components/TextRenderComponent.h"
+#include "Engine/TextRenderActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Navigation/BezierCurveFunctions.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Utils/Pairing.h"
 
 
 ANavigationGate::ANavigationGate()
@@ -32,6 +36,7 @@ ANavigationGate::ANavigationGate()
 		Gate = GateVisualAsset.Object;
 		GateVisual->SetStaticMesh(Gate);
 		GateVisual->SetCollisionProfileName(TEXT("NoCollision"));
+		
 	}
 	else
 	{
@@ -51,7 +56,9 @@ void ANavigationGate::BeginPlay()
 void ANavigationGate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	GateVisual->SetHiddenInGame(!bIsVisibleInGame);
+	GateLocationLabel->SetActorHiddenInGame(!bIsVisibleInGame);
+	
 	if(NextGate != nullptr || NextGate == this)
 	{
 		TArray<AActor*> FoundActors;
@@ -80,6 +87,7 @@ void ANavigationGate::OnConstruction(const FTransform& Transform)
 		}
 		
 	}
+	GateVisual->SetHiddenInGame(true);
 	Super::OnConstruction(Transform);
 }
 
@@ -99,10 +107,8 @@ void ANavigationGate::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 			if (UStaticMeshComponent* MeshComp = Cast<UStaticMeshComponent>(Comp))
 			{
 				GateVisual->SetStaticMesh(Gate); // Update the component to the new mesh
-#if WITH_EDITOR
 				GEditor->EditorUpdateComponents();
-#endif
-				
+			
 			}
 		}
 	}
@@ -114,6 +120,21 @@ void ANavigationGate::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 bool ANavigationGate::ShouldTickIfViewportsOnly() const
 {
 	return true;
+}
+
+void ANavigationGate::AddLabel(const FIntVector* Location) 
+{
+	const FVector WorldLocation = UHexagonMap::HexToLocation(Location, 1500.0f);
+
+	const FVector TextLocation = FVector(WorldLocation.X, WorldLocation.Y, WorldLocation.Z + 1000);
+	GateLocationLabel = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), TextLocation, FRotator(0.f, 90.f, 0.f));
+
+	const FString LocationStr = FString::Printf(TEXT("(%d) - [%d,%d,%d]"), UPairing::Pair(Location->X, Location->Y),Location->X, Location->Y, Location->Z);
+	GateLocationLabel->GetTextRender()->SetText(FText::FromString(LocationStr));
+	GateLocationLabel->GetTextRender()->SetTextRenderColor(FColor::White);
+	GateLocationLabel->SetActorScale3D(FVector(5.f, 5.f, 5.f));
+	GateLocationLabel->Tags.Add(FName("HexagonLabel"));
+	GateLocationLabel->Tags.Add(FName("Hexagon"));	
 }
 
 void ANavigationGate::CalculateControlPointsCubicBezier()

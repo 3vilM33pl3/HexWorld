@@ -156,7 +156,7 @@ void UHexagonMap::PopulateMap()
 				FVector LookAt = HexToLocation(LinkLocation, 1500);
 				FRotator GateRot = UKismetMathLibrary::FindLookAtRotation(WorldLocation, LookAt);
 				ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), (WorldLocation + LookAt) / 2, GateRot, GateSpawnParameters);
-				DrawDebugLine(GetWorld(), FVector{WorldLocation.X, WorldLocation.Y, 500}, FVector{LookAt.X, LookAt.Y, 500}, FColor::Emerald, true, -1, 0, 10);
+				// DrawDebugLine(GetWorld(), FVector{WorldLocation.X, WorldLocation.Y, 500}, FVector{LookAt.X, LookAt.Y, 500}, FColor::Emerald, true, -1, 0, 10);
 				
 				NavigationGate->NextGateNameTag = FString::Printf(TEXT("Gate_%d"), FCString::Atoi64(*LocSingleValue));
 				
@@ -166,30 +166,12 @@ void UHexagonMap::PopulateMap()
 				NavigationGate->SetOwner(HexActor);
 				NavigationGate->Tags.Add("Hexagon");
 				NavigationGate->Tags.Add("HexagonGate");
+				NavigationGate->AddLabel(&HexData->Location);
 			}
-			
-			AddLabel(&HexData->Location);
-			
 		}
-			
 	}
-		
 }
 
-void UHexagonMap::AddLabel(const FIntVector* Location) const
-{
-	const FVector WorldLocation = HexToLocation(Location, 1500.0f);
-
-	const FVector TextLocation = FVector(WorldLocation.X, WorldLocation.Y, WorldLocation.Z + 1000);
-	ATextRenderActor* Text = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), TextLocation, FRotator(0.f, 90.f, 0.f));
-
-	const FString LocationStr = FString::Printf(TEXT("(%d) - [%d,%d,%d]"), UPairing::Pair(Location->X, Location->Y),Location->X, Location->Y, Location->Z);
-	Text->GetTextRender()->SetText(FText::FromString(LocationStr));
-	Text->GetTextRender()->SetTextRenderColor(FColor::White);
-	Text->SetActorScale3D(FVector(5.f, 5.f, 5.f));
-	Text->Tags.Add(FName("HexagonLabel"));
-	Text->Tags.Add(FName("Hexagon"));
-}
 
 void UHexagonMap::AddRiver(FString Name, const int PointPosition)
 {
@@ -272,7 +254,7 @@ void UHexagonMap::AddRiver(FString Name, const int PointPosition)
 
 }
 
-FVector UHexagonMap::HexToLocation(const FIntVector* Location, const int Size) const
+FVector UHexagonMap::HexToLocation(const FIntVector* Location, const int Size) 
 {
 	const double x = Size * (sqrt(3.0) * Location->X + sqrt(3.0)/2.0 * Location->Y);
 	const double y = Size * (3.0/2.0 * Location->Y);

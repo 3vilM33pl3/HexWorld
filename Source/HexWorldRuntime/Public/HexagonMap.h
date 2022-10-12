@@ -23,8 +23,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Options)
 	void PopulateMap();
 
-	void AddLabel(const FIntVector* Location) const;
-
 	UFUNCTION(BlueprintCallable, Category = Options)
 	void AddRiver(FString Name, int PointPosition);
 
@@ -42,7 +40,7 @@ public:
 
 	TCircularQueue<UHexData*>* HexCoordData = new TCircularQueue<UHexData*>(120);
 
-	FVector HexToLocation(const FIntVector* Location, const int Size) const;
+	static FVector HexToLocation(const FIntVector* Location, const int Size);
 
 protected:
 	TSoftObjectPtr<UMaterialInterface> WaterMaterial;

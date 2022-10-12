@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include <vector>
+
+#include "Engine/TextRenderActor.h"
 #include "NavigationGate.generated.h"
 
 UCLASS()
@@ -60,9 +62,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
 	UStaticMesh* Gate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
+	bool bIsVisibleInGame = false;
+
 	UStaticMeshComponent* GateVisual;
+
+	void AddLabel(const FIntVector* Location);
 
 private:
 	std::vector<FVector> CubicBezierCurvePoints;
 	void CalculateControlPointsCubicBezier();
+	ATextRenderActor* GateLocationLabel;
 };

@@ -60,6 +60,7 @@ void UHexWorldRetrieveMapProperties::AddRiver()
 	HexagonMap->AddRiver("Gate_1",4);
 	HexagonMap->AddRiver("Gate_7",5);
 	HexagonMap->AddRiver("Gate_6",6);
+	HexagonMap->AddRiver("Gate_4",7);
 }
 
 void UHexWorldRetrieveMapProperties::TestConnection()
