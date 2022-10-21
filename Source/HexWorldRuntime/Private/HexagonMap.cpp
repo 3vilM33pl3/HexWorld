@@ -127,7 +127,7 @@ void UHexagonMap::PopulateMap()
 			FGuid guid = FGuid::NewGuid();
 
 			// Setting GUID before spawn so that it can be saved in the data asset before the Blueprints construction scripts runs
-			SpawnParameters.OverrideActorGuid = guid; 
+			// SpawnParameters.OverrideActorGuid = guid; 
 			HexDataAsset->LocalData.Add(guid, FLocalHexagon{HexData->LocalData}); 
 			
 			AActor* HexActor = GetWorld()->SpawnActor<AActor>(GeneratedBP->GeneratedClass, WorldLocation, Rotation, SpawnParameters);
@@ -242,7 +242,7 @@ void UHexagonMap::AddRiver(FString Name, const int PointPosition)
 	HeightmapSettings.FalloffSettings.EdgeOffset = 128.0f;
 	HeightmapSettings.FalloffSettings.ZOffset = 8.0f;
 
-	RiverComponents->WaterHeightmapSettings = HeightmapSettings;
+	// RiverComponents->WaterHeightmapSettings = HeightmapSettings;
 
 	WaterMaterial = FSoftObjectPath(TEXT("/Water/Materials/WaterSurface/Water_Material_River.Water_Material_River"));
 	RiverComponents->SetWaterMaterial(WaterMaterial.LoadSynchronous());

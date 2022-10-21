@@ -57,8 +57,13 @@ void AHexWorldPawn::Tick(float DeltaTime)
 	if (ProgressAlongCurve < 1.0f)
 	{
 		ProgressAlongCurve = ProgressAlongCurve + DeltaTime * CarrierSpeed / Length;
+		if (ProgressAlongCurve > 1.0f)
+		{
+			ProgressAlongCurve = 1.0f;
+		}
 		const FVector Location = BezierCurveFunctions::CubicBezierLocation(P0, P1, P2, P3, ProgressAlongCurve);
 		this->SetActorLocation(Location);
+		UE_LOG(LogTemp, Verbose, TEXT("Progress: %f"), ProgressAlongCurve);
 
 		FVector Rotation = BezierCurveFunctions::CubicBezierCurveDerivative(P0, P1, P2, P3, ProgressAlongCurve);
 		Rotation.Z = 0;
@@ -68,6 +73,8 @@ void AHexWorldPawn::Tick(float DeltaTime)
 		if (NextGate != nullptr && NextGate->NextGate != nullptr)
 		{
 			auto const CurrentGate = NextGate;
+			UE_LOG(LogTemp, Log, TEXT("This gate name tag: %s"), *CurrentGate->Tags[0].ToString());
+			UE_LOG(LogTemp, Log, TEXT("Next gate name tag: %s"), *CurrentGate->NextGateNameTag);
 			Length = CurrentGate->Length;
 			ForwardBezierStrength = CurrentGate->ForwardBezierStrength;
 			BackwardBezierStrength = CurrentGate->NextGate->BackwardBezierStrength;

@@ -56,8 +56,9 @@ void ANavigationGate::BeginPlay()
 void ANavigationGate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	GateVisual->SetHiddenInGame(!bIsVisibleInGame);
-	GateLocationLabel->SetActorHiddenInGame(!bIsVisibleInGame);
+
+	if(GateVisual) GateVisual->SetHiddenInGame(!bIsVisibleInGame);
+	if(GateLocationLabel) GateLocationLabel->SetActorHiddenInGame(!bIsVisibleInGame);
 	
 	if(NextGate != nullptr || NextGate == this)
 	{

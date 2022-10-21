@@ -34,7 +34,8 @@ public class HexWorldRuntime : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"HexWorldLibrary", "Water"
+				"HexWorldLibrary", 
+				"Water"
 			}
 		);
 		
