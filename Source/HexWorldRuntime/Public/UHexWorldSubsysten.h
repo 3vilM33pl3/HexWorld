@@ -16,6 +16,7 @@ class HEXWORLDRUNTIME_API UUHexWorldSubsysten : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
+	void DestroyAllHexagonActors();
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	

@@ -5,11 +5,8 @@
 
 #include "Kismet/GameplayStatics.h"
 
-void UUHexWorldSubsysten::Initialize(FSubsystemCollectionBase& Collection)
+void UUHexWorldSubsysten::DestroyAllHexagonActors()
 {
-	Super::Initialize(Collection);
-	UE_LOG(LogTemp, Warning, TEXT("UUHexWorldSubsysten::Initialize"));
-
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Hexagon"), FoundActors);
 
@@ -17,6 +14,14 @@ void UUHexWorldSubsysten::Initialize(FSubsystemCollectionBase& Collection)
 	{
 		Hex->Destroy();
 	}
+}
+
+void UUHexWorldSubsysten::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+	UE_LOG(LogTemp, Warning, TEXT("UUHexWorldSubsysten::Initialize"));
+
+	DestroyAllHexagonActors();
 
 	HexagonMap = NewObject<UHexagonMap>(this);
 	HexagonMap->RetrieveMap(true);
@@ -25,6 +30,8 @@ void UUHexWorldSubsysten::Initialize(FSubsystemCollectionBase& Collection)
 void UUHexWorldSubsysten::Deinitialize()
 {
 	Super::Deinitialize();
+
+	DestroyAllHexagonActors();
 
 	UE_LOG(LogTemp, Warning, TEXT("UUHexWorldSubsysten::Deinitialize"));
 	
