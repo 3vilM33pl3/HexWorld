@@ -22,6 +22,7 @@ UHexagonMap::UHexagonMap()
 	
 }
 
+
 void UHexagonMap::RetrieveMap(bool bClearMap)
 {
 	UE_LOG(LogTemp, Log, TEXT("Retrieve map called"));
@@ -48,9 +49,8 @@ void UHexagonMap::RetrieveMap(bool bClearMap)
 		for(int i=0; i< HexCV.size(); i++)
 		{
 			UHexData* HexData = NewObject<UHexData>();
-			HexData->Location.X = HexCV[i].X;
-			HexData->Location.Y = HexCV[i].Y;
-			HexData->Location.Z = HexCV[i].Z;
+			const FIntVector HexLocation = FIntVector(HexCV[i].X, HexCV[i].Y, HexCV[i].Z);
+			HexData->Location = HexLocation;
 			HexData->Type = FString(HexCV[i].Type.c_str());
 			for(auto const&[ key, value]: HexCV[i].LocalData)
 			{
@@ -68,10 +68,15 @@ void UHexagonMap::RetrieveMap(bool bClearMap)
 
 void UHexagonMap::PopulateMap()
 {
+	if(!HexCoordData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HexWorldData is null"));
+		return;
+	}
 	
 	if(HexCoordData && !HexCoordData->IsEmpty())
 	{
-		UHexData* HexData;
+		UHexData* HexData = NewObject<UHexData>();
 		
 		if(HexCoordData->Dequeue(HexData))
 		{
