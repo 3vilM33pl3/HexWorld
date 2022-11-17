@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "NavigationGate.h"
 #include "GameFramework/Pawn.h"
+#include "HUD/HexWorldHUD.h"
 #include "HexWorldPawn.generated.h"
 
 UCLASS()
@@ -70,5 +71,7 @@ private:
 	void CalculateControlPointsCubicBezier();
 
 	void StartNavigation();
+
+	AHexWorldHUD* HUD;
 	
 };

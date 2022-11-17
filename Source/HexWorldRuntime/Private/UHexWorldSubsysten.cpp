@@ -2,6 +2,8 @@
 
 #include "UHexWorldSubsysten.h"
 
+#include "GameFramework/GameModeBase.h"
+#include "HUD/HexWorldHUD.h"
 #include "Kismet/GameplayStatics.h"
 
 void UUHexWorldSubsysten::DestroyAllHexagonActors()
@@ -24,6 +26,8 @@ void UUHexWorldSubsysten::Initialize(FSubsystemCollectionBase& Collection)
 
 	HexagonMap = NewObject<UHexagonMap>(this);
 	HexagonMap->RetrieveMap(true);
+
+
 }
 
 void UUHexWorldSubsysten::Deinitialize()

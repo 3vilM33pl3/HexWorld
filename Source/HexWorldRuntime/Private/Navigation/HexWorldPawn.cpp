@@ -2,6 +2,7 @@
 
 #include "Navigation/HexWorldPawn.h"
 
+#include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Navigation/BezierCurveFunctions.h"
 #include "UObject/ConstructorHelpers.h"
@@ -9,6 +10,7 @@
 
 AHexWorldPawn::AHexWorldPawn()
 {
+	
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Setup carrier
@@ -40,9 +42,16 @@ void AHexWorldPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	
+	if (PlayerController)
+	{
+		PlayerController->ClientSetHUD(AHexWorldHUD::StaticClass());
+		HUD = Cast<AHexWorldHUD>(PlayerController->GetHUD());
+	}
+	
 	StartNavigation();
-
-
 		
 }
 

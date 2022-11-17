@@ -22,7 +22,8 @@ public class HexWorldRuntime : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", "Water",
+				"Core", 
+				"Water",
 			}
 		);
 			
@@ -35,7 +36,8 @@ public class HexWorldRuntime : ModuleRules
 				"Slate",
 				"SlateCore",
 				"HexWorldLibrary", 
-				"Water"
+				"Water",
+				"UMG"
 			}
 		);
 		

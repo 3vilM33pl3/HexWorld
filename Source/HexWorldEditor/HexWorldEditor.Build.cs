@@ -22,6 +22,7 @@ public class HexWorldEditor : ModuleRules
 			new string[]
 			{
 				"Core",
+				"Water",
 			}
 		);
 			
@@ -41,7 +42,7 @@ public class HexWorldEditor : ModuleRules
 				"InteractiveToolsFramework",
 				"EditorInteractiveToolsFramework", 
 				"HexWorldLibrary",
-				"HexWorldRuntime", "Water"
+				"HexWorldRuntime",
 			}
 		);
 		
