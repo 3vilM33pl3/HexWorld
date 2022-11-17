@@ -18,12 +18,22 @@ class HEXWORLDRUNTIME_API UHexagonMap : public UObject
 public:
 	UHexagonMap();
 
+	/**
+	 * Get hexagon map data from server and put them on a circular queue.
+	 * @param deprecated bClearMap remove all assets with a tag "Hexagon" from the map.
+	 */
 	UFUNCTION(BlueprintCallable, Category = Options)
 	void RetrieveMap(bool bClearMap);
 
+	/**
+	 * Get hexagon map data from circular queue and use it tp populate the map.
+	 */ 
 	UFUNCTION(BlueprintCallable, Category = Options)
 	void PopulateMap();
 
+	/**
+	 * Add a river to the map, folowing the path set by the gates. 
+	 */
 	UFUNCTION(BlueprintCallable, Category = Options)
 	void AddRiver(FString Name, int PointPosition);
 
