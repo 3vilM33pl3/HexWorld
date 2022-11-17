@@ -1,4 +1,6 @@
-﻿#include "HexWorldEditorToolkit.h"
+﻿// Copyright (c) 2022, Robot Motel Limited, All Rights Reserved.
+
+#include "HexWorldEditorToolkit.h"
 
 #define LOCTEXT_NAMESPACE "HexWorldToolkit"
 

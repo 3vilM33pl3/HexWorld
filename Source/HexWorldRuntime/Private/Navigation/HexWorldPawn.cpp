@@ -1,4 +1,6 @@
-﻿#include "Navigation/HexWorldPawn.h"
+﻿// Copyright (c) 2022, Robot Motel Limited, All Rights Reserved.
+
+#include "Navigation/HexWorldPawn.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Navigation/BezierCurveFunctions.h"

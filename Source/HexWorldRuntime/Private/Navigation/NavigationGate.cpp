@@ -1,4 +1,6 @@
-﻿#include "Navigation/NavigationGate.h"
+﻿// Copyright (c) 2022, Robot Motel Limited, All Rights Reserved.
+
+#include "Navigation/NavigationGate.h"
 
 #if WITH_EDITOR
 #include "Editor.h"

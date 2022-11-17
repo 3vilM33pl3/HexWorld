@@ -1,4 +1,6 @@
-﻿#include "HexagonWorld.h"
+﻿// Copyright (c) 2022, Robot Motel Limited, All Rights Reserved.
+
+#include "HexagonWorld.h"
 
 #include "UHexWorldSubsysten.h"
 #include "Kismet/GameplayStatics.h"

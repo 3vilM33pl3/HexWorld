@@ -1,4 +1,6 @@
-﻿#include "HexWorldEditor.h"
+﻿// Copyright (c) 2022, Robot Motel Limited, All Rights Reserved.
+
+#include "HexWorldEditor.h"
 
 #include "HexWorldCommands.h"
 

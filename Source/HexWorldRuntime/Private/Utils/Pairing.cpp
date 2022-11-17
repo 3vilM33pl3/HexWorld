@@ -1,4 +1,6 @@
-﻿#include "Utils/Pairing.h"
+﻿// Copyright (c) 2022, Robot Motel Limited, All Rights Reserved.
+
+#include "Utils/Pairing.h"
 
 
 uint64 UPairing::SzudzikPairing(const uint64 X, const uint64 Y)

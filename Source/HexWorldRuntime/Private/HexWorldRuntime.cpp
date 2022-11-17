@@ -1,4 +1,6 @@
-﻿#include "HexWorldRuntime.h"
+﻿// Copyright (c) 2022, Robot Motel Limited, All Rights Reserved.
+
+#include "HexWorldRuntime.h"
 
 #define LOCTEXT_NAMESPACE "HexWorldRuntime"
 
