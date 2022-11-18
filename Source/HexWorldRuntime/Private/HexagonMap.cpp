@@ -73,7 +73,7 @@ void UHexagonMap::PopulateMap()
 		return;
 	}
 	
-	if(HexCoordData && !HexCoordData->IsEmpty())
+	if(HexCoordData || HexCoordData->IsEmpty())
 	{
 		UHexData* HexData = NewObject<UHexData>();
 		

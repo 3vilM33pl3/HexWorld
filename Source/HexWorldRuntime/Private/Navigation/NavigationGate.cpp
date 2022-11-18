@@ -127,14 +127,14 @@ bool ANavigationGate::ShouldTickIfViewportsOnly() const
 
 void ANavigationGate::AddLabel(const FIntVector* Location) 
 {
-	const FVector WorldLocation = UHexagonMap::HexToLocation(Location, 1500.0f);
-
-	const FVector TextLocation = FVector(WorldLocation.X, WorldLocation.Y, WorldLocation.Z + 1000);
+	const FVector GateLocation = GetActorLocation();
+	const FVector TextLocation = FVector(GateLocation.X, GateLocation.Y , GateLocation.Z + 1000);
 	GateLocationLabel = GetWorld()->SpawnActor<ATextRenderActor>(ATextRenderActor::StaticClass(), TextLocation, FRotator(0.f, 90.f, 0.f));
 
 	const FString LocationStr = FString::Printf(TEXT("(%d) - [%d,%d,%d]"), UPairing::Pair(Location->X, Location->Y),Location->X, Location->Y, Location->Z);
 	GateLocationLabel->GetTextRender()->SetText(FText::FromString(LocationStr));
 	GateLocationLabel->GetTextRender()->SetTextRenderColor(FColor::White);
+	GateLocationLabel->GetTextRender()->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
 	GateLocationLabel->SetActorScale3D(FVector(5.f, 5.f, 5.f));
 	GateLocationLabel->Tags.Add(FName("HexagonLabel"));
 	GateLocationLabel->Tags.Add(FName("Hexagon"));	
