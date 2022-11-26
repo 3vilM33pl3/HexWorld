@@ -9,7 +9,8 @@
  * Class with pairing functions which maps two signed integers to a single, unique integer.
  * It uses the Szudzik function to map two integers to a single integer. The Szudzik function
  * can only map positive integers, so we first map the signed integers to unique unsigned integers
- * and vice versa.
+ * and vice versa using zigzag encoding. Zigzag encoding maps negative integers to even numbers and
+ * positive integers to odd numbers. 
  */
 UCLASS(BlueprintType)
 class HEXWORLDRUNTIME_API UPairing final: public UBlueprintFunctionLibrary
