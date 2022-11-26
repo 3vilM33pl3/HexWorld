@@ -31,3 +31,8 @@ void AHexWorldHUD::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
+void AHexWorldHUD::SetNextGateLabel(ATextRenderActor* LocationLabel)
+{
+	this->LocationLabel = LocationLabel;
+}

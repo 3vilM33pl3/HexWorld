@@ -92,6 +92,7 @@ void AHexWorldPawn::Tick(float DeltaTime)
 			NextGate = CurrentGate->NextGate;
 			ProgressAlongCurve = 0.0;
 			CalculateControlPointsCubicBezier();
+			HUD->SetNextGateLabel(NextGate->GateLocationLabel);
 		}
 	}
 }

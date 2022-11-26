@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "Navigation/NavigationGate.h"
 #include "UObject/Object.h"
 #include "HexWorldHUD.generated.h"
 
@@ -21,8 +22,11 @@ public:
 	virtual void DrawHUD() override;
 
 	virtual void BeginPlay() override;
+	
+	void SetNextGateLabel(ATextRenderActor* LocationLabel);
 
 private:
 	UTexture2D* Logo3vilM33pl3;
+	ATextRenderActor* LocationLabel;
 
 };

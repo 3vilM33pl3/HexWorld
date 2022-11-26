@@ -71,8 +71,10 @@ public:
 
 	void AddLabel(const FIntVector* Location);
 
+	ATextRenderActor* GateLocationLabel;
+
 private:
 	std::vector<FVector> CubicBezierCurvePoints;
 	void CalculateControlPointsCubicBezier();
-	ATextRenderActor* GateLocationLabel;
+	
 };
