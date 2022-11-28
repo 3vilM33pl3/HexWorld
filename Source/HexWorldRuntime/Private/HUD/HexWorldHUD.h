@@ -23,10 +23,11 @@ public:
 
 	virtual void BeginPlay() override;
 	
-	void SetNextGateLabel(ATextRenderActor* LocationLabel);
+	void SetNextGateLabel(ATextRenderActor* ALocationLabel);
 
 private:
 	UTexture2D* Logo3vilM33pl3;
+	UTexture2D* NarrowboatTexture;
 	ATextRenderActor* LocationLabel;
 
 };
