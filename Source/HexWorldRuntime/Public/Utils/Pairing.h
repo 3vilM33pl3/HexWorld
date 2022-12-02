@@ -47,6 +47,6 @@ private:
 	static uint64 SzudzikPairing(uint64 X, uint64 Y);
 
 	// maps a single, unique unsigned integer to two unsigned integers
-	static void SzudzikUnPairing(uint64 S, int64& X, int64& Y);
+	static void SzudzikUnPairing(const int64 S, int64& X, int64& Y);
 	
 };

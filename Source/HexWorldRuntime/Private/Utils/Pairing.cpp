@@ -8,7 +8,7 @@ uint64 UPairing::SzudzikPairing(const uint64 X, const uint64 Y)
 	return X >= Y ? X * X + X + Y : X + Y * Y;
 }
 
-void UPairing::SzudzikUnPairing(const uint64 S, int64& X, int64& Y)
+void UPairing::SzudzikUnPairing(const int64 S, int64& X, int64& Y)
 {
 	const int64 b = static_cast<int64>(floor(sqrt(static_cast<float>(S))));
 	const int64 a = S - b * b;

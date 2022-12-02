@@ -80,14 +80,15 @@ void UHexagonMap::PopulateMap()
 		if(HexCoordData->Dequeue(HexData))
 		{
 			const FString Type(HexData->Type);
-			EHexagonDirection Direction = EHexagonDirection::N;
-			if(HexData->LocalData.Contains("direction"))
+			int32 RotationDegrees = 0;
+			if(HexData->LocalData.Contains("rotation"))
 			{
-				Direction = AHexagon::ConvertDirection(HexData->LocalData.Find("direction"));
+				RotationDegrees = FCString::Atoi(ToCStr(*HexData->LocalData.Find("rotation")));
 			} 
-			
+
+			const FRotator Rotation(0.0f, RotationDegrees, 0.0f);
 			const FVector WorldLocation = HexToLocation(&HexData->Location, 1500);
-			const FRotator Rotation(0.0f, 60.0f * (static_cast<std::underlying_type_t<EHexagonDirection>>(Direction) - 1), 0.0f);
+			
 
 			UE_LOG(LogTemp, Display, TEXT("[%d, %d, %d ] %s"), HexData->Location.X, HexData->Location.Y, HexData->Location.Z, *Type);
 
@@ -138,7 +139,7 @@ void UHexagonMap::PopulateMap()
 			HexActor->Modify(true);
 			HexActor->Tags.Add("Hexagon");
 
-			const FString DirectionStr = FString("direction:").Append(ToCStr(*HexData->LocalData.Find("direction"))); 
+			const FString DirectionStr = FString("rotation:").Append(ToCStr(*HexData->LocalData.Find("rotation"))); 
 			const FString LocationStr = FString::Printf(TEXT("location:%d:%d"), HexData->Location.X, HexData->Location.Y);
 			
 			HexActor->Tags.Add(ToCStr(DirectionStr));
@@ -146,7 +147,7 @@ void UHexagonMap::PopulateMap()
 
 
 			
-			if(HexData->LocalData.Contains("link"))
+			if(HexData->LocalData.Contains("edge"))
 			{
 				FActorSpawnParameters GateSpawnParameters;
 				GateSpawnParameters.NameMode = FActorSpawnParameters::ESpawnActorNameMode::Requested;
@@ -154,8 +155,14 @@ void UHexagonMap::PopulateMap()
 				GateSpawnParameters.Name = FName(*Gatename);
 								
 				int64 X, Y;
-				FString LocSingleValue = *HexData->LocalData.Find("link");
-				UPairing::UnPair(FCString::Atoi64(*LocSingleValue), X, Y);
+				FString LocSingleValue = *HexData->LocalData.Find("edge");
+				FString YS;
+				FString XS;
+				LocSingleValue.Split(":", &XS, &YS);
+				X = FCString::Atoi64(*XS);
+				Y = FCString::Atoi64(*YS);
+				
+				// UPairing::UnPair(FCString::Atoi64(*LocSingleValue), X, Y);
 				FIntVector* LinkLocation = new FIntVector(X, Y, 0);
 				FVector LookAt = HexToLocation(LinkLocation, 1500);
 				FRotator GateRot = UKismetMathLibrary::FindLookAtRotation(WorldLocation, LookAt);
