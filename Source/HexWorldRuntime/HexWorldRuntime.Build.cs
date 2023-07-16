@@ -36,7 +36,6 @@ public class HexWorldRuntime : ModuleRules
 				"Slate",
 				"SlateCore",
 				"HexWorldLibrary", 
-				"Water",
 				"UMG"
 			}
 		);

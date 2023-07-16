@@ -72,8 +72,14 @@ void UHexagonMap::PopulateMap()
 		UE_LOG(LogTemp, Warning, TEXT("HexWorldData is null"));
 		return;
 	}
+
+	if(HexCoordData->IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HexWorldData is empty"));
+		return;
+	}
 	
-	if(HexCoordData || HexCoordData->IsEmpty())
+	if(HexCoordData || !HexCoordData->IsEmpty())
 	{
 		UHexData* HexData = NewObject<UHexData>();
 		
@@ -169,7 +175,8 @@ void UHexagonMap::PopulateMap()
 				ANavigationGate* NavigationGate = GetWorld()->SpawnActor<ANavigationGate>(ANavigationGate::StaticClass(), (WorldLocation + LookAt) / 2, GateRot, GateSpawnParameters);
 				// DrawDebugLine(GetWorld(), FVector{WorldLocation.X, WorldLocation.Y, 500}, FVector{LookAt.X, LookAt.Y, 500}, FColor::Emerald, true, -1, 0, 10);
 				
-				NavigationGate->NextGateNameTag = FString::Printf(TEXT("Gate_%d"), FCString::Atoi64(*LocSingleValue));
+				// NavigationGate->NextGateNameTag = FString::Printf(TEXT("Gate_%d"), FCString::Atoi64(*LocSingleValue));
+				NavigationGate->NextGateNameTag = FString::Printf(TEXT("Gate_%d"), UPairing::Pair(X, Y));
 				
 				
 				NavigationGate->Tags.Add(FName(*Gatename));
@@ -188,7 +195,7 @@ void UHexagonMap::AddRiver(FString Name, const int PointPosition)
 {
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName(Name), FoundActors);
-
+		
 	if (FoundActors.IsEmpty())
 	{
 		return;
@@ -261,7 +268,10 @@ void UHexagonMap::AddRiver(FString Name, const int PointPosition)
 	UWaterSplineMetadata* Data = RiverActor->GetWaterSplineMetadata();
 	UWaterSplineComponent* Component = RiverActor->GetWaterSpline();
 
-	RiverComponents->UpdateAll(true);
+	FOnWaterBodyChangedParams Params;
+	Params.bShapeOrPositionChanged = true;
+	Params.bWeightmapSettingsChanged = true;
+	RiverComponents->UpdateAll(Params);
 
 }
 

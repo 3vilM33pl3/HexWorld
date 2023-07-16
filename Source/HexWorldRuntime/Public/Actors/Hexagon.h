@@ -10,15 +10,15 @@
 UENUM()
 enum class EHexagonDirection : uint8
 {
-	CENTER = 0 UMETA(DisplayName "Center"),
-	N = 1 UMETA(DisplayName = "North"),
-	NE = 2 UMETA(DisplayName = "NorthEast"),
-	E = 3 UMETA(DisplayName = "East"),
-	SE = 4 UMETA(DisplayName = "SouthEast"),
-	S = 5 UMETA(DisplayName = "South"),
-	SW = 6 UMETA(DisplayName = "SouthWest"),
-	W = 7 UMETA(DisplayName = "West"),
-	NW = 8 UMETA(DisplayName = "NorthWest")
+	CENTER UMETA(DisplayName = "Center"),
+	N UMETA(DisplayName = "North"),
+	NE UMETA(DisplayName = "NorthEast"),
+	E UMETA(DisplayName = "East"),
+	SE UMETA(DisplayName = "SouthEast"),
+	S UMETA(DisplayName = "South"),
+	SW UMETA(DisplayName = "SouthWest"),
+	W UMETA(DisplayName = "West"),
+	NW UMETA(DisplayName = "NorthWest"),
 	
 };
 

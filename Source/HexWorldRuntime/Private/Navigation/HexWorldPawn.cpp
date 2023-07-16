@@ -84,7 +84,10 @@ void AHexWorldPawn::Tick(float DeltaTime)
 		if (NextGate != nullptr && NextGate->NextGate != nullptr)
 		{
 			auto const CurrentGate = NextGate;
-			UE_LOG(LogTemp, Log, TEXT("This gate name tag: %s"), *CurrentGate->Tags[0].ToString());
+			if(CurrentGate->Tags.Num() > 0)
+			{
+				UE_LOG(LogTemp, Log, TEXT("This gate name tag: %s"), *CurrentGate->Tags[0].ToString());
+			}
 			UE_LOG(LogTemp, Log, TEXT("Next gate name tag: %s"), *CurrentGate->NextGateNameTag);
 			Length = CurrentGate->Length;
 			ForwardBezierStrength = CurrentGate->ForwardBezierStrength;

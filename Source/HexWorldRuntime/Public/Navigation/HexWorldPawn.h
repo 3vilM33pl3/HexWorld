@@ -46,16 +46,16 @@ public:
 	float Length = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
-	float InitialBezierStrength = 1000;
+	float InitialBezierStrength = 100;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Magic Bezier")
-	float ForwardBezierStrength = 1000;
+	float ForwardBezierStrength = 200;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Magic Bezier")
-	float BackwardBezierStrength = 1000;
+	float BackwardBezierStrength = 200;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
-	float CarrierSpeed = 200;
+	float CarrierSpeed = 80;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Magic Bezier")
 	UStaticMesh* Carrier;
